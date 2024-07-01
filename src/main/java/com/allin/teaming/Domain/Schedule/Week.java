@@ -1,4 +1,4 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Schedule;
 
 public enum Week {
     MONDAY,

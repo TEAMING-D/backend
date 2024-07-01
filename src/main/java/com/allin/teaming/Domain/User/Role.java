@@ -1,4 +1,4 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.User;
 
 public enum Role {
     LEADER, COLLECTOR, DESIGNER, WRITER, PRESENTER

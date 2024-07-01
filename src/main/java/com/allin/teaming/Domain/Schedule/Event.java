@@ -1,13 +1,10 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Schedule;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
@@ -15,7 +12,7 @@ import java.util.List;
 public class Event {
     @Id
     @Column(name = "event_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

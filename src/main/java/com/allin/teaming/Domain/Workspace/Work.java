@@ -1,5 +1,6 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Workspace;
 
+import com.allin.teaming.Domain.User.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Work {
     @Id @Column(name = "work_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
