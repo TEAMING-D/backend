@@ -1,4 +1,4 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Workspace;
 
 public enum WorkStatus {
     NOT_STARTED,

@@ -1,5 +1,6 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.User;
 
+import com.allin.teaming.Domain.Workspace.Meeting;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MeetingParticipant {
     @Id @Column(name = "meeting_participant_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @ManyToOne
     private User user;
 
-    @OneToMany
+    @ManyToOne
     private Meeting meeting;
 }

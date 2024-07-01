@@ -1,5 +1,6 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Workspace;
 
+import com.allin.teaming.Domain.User.Membership;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class Workspace {
 
     @Id
     @Column(name = "workspace_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "workspace")

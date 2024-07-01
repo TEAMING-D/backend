@@ -1,5 +1,8 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.Workspace;
 
+import com.allin.teaming.Domain.Schedule.Week;
+import com.allin.teaming.Domain.User.MeetingParticipant;
+import com.allin.teaming.Domain.Workspace.Workspace;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 public class Meeting {
     @Id
     @Column(name = "meeting_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -31,6 +34,6 @@ public class Meeting {
 
     private LocalDate created_at;
 
-    @OneToMany(mappedBy = "meeting_id")
+    @OneToMany(mappedBy = "meeting")
     private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
 }

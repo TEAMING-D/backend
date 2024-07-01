@@ -1,5 +1,7 @@
-package com.allin.teaming.Domain;
+package com.allin.teaming.Domain.User;
 
+import com.allin.teaming.Domain.Schedule.Schedule;
+import com.allin.teaming.Domain.Workspace.Work;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ public class User {
 
     @Id
     @Column(name = "user_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
