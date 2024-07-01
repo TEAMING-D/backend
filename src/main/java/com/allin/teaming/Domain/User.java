@@ -32,4 +32,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Membership> memberships = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Work> works = new ArrayList<>();
 }
