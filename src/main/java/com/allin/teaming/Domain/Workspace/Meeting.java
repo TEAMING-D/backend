@@ -22,6 +22,7 @@ public class Meeting {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
     private String name;
