@@ -29,7 +29,7 @@ public class UserDto {
         private String username;
 
         private String info;
-        private String school;
+        private Long schoolID;
         private String major;
 
         public static UserInfoDto of(User user) {
@@ -41,7 +41,7 @@ public class UserDto {
             this.username = user.getUsername();
 
             this.info = user.getInfo();
-            this.school = user.getSchool();
+            this.schoolID = user.getSchool().getId();
             this.major = user.getMajor();
         }
     }
@@ -50,7 +50,7 @@ public class UserDto {
     public static class UserModifyDto {
         private String username;
         private String info;
-
+        private String school;
     }
 
 }

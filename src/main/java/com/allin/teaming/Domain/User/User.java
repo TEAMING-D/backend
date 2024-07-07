@@ -31,14 +31,8 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    // 계정 테이블 추가할까
-    private String notionId;
-    private String githubId;
-    private String emailId;
-
     private String info;
 
-    private String school;
     private String major;
 
     @OneToOne(mappedBy = "user")
@@ -53,6 +47,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Work> works = new ArrayList<>();
 
+    // 협업 계정 리스트
     @OneToMany(mappedBy = "user")
     private List<CollabTool> collabTools = new ArrayList<>();
+
+    // 학교
+    @ManyToOne
+    @JoinColumn(name = "school_id")
+    private School school;
 }
