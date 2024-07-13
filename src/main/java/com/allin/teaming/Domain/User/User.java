@@ -31,6 +31,8 @@ public class User {
     @Column(nullable = false)
     private String username;
 
+    private String phone;
+
     private String info;
 
     private String major;
@@ -55,4 +57,15 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "school_id")
     private School school;
+
+    public void update(String username, String phone, String info,
+                       School school, String email, String major) {
+        this.username = username;
+        this.phone = phone;
+        this.info = info;
+        this.school = school;
+        this.email = email;
+        this.major = major;
+
+    }
 }
