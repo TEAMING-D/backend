@@ -15,9 +15,11 @@ public class Work {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private String name;

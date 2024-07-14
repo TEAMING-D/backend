@@ -1,22 +1,26 @@
 package com.allin.teaming.Domain.User;
 
-import com.allin.teaming.Domain.Workspace.Meeting;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor
-public class MeetingParticipant {
-    @Id @Column(name = "meeting_participant_id")
+@AllArgsConstructor
+@Builder
+public class CollabTool {
+    @Id
+    @Column(name = "colab_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String toolName;
+    private String account;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "meeting_id")
-    private Meeting meeting;
 }

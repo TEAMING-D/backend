@@ -22,10 +22,11 @@ public class Schedule {
     private String title;
 
     @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private LocalDate created_date;
 
-    @OneToMany
+    @OneToMany(mappedBy = "schedule")
     private List<Event> events = new ArrayList<>();
 }
