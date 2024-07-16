@@ -1,5 +1,5 @@
 package com.allin.teaming.Domain.User;
 
-public enum Role {
+public enum ProjectRole {
     LEADER, COLLECTOR, DESIGNER, WRITER, PRESENTER
 }

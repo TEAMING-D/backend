@@ -1,5 +1,6 @@
 package com.allin.teaming.Dto.User;
 
+import com.allin.teaming.Domain.User.RoleType;
 import com.allin.teaming.Domain.User.School;
 import com.allin.teaming.Domain.User.User;
 import jakarta.validation.constraints.Email;
@@ -22,26 +23,30 @@ public class UserDto {
 
         @NotBlank
         private String phone;
+
+        @Builder.Default
+        private RoleType role = RoleType.USER;
+
+        @NotBlank
+        private String password;
+
         private String info;
         private Long schoolID;
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
         private String major;
 
-        public User toUser(School school) {
+        public User toUser(School school, String password) {
             return User.builder()
                     .username(username)
                     .phone(phone)
+                    .password(password)
+                    .role(role)
                     .info(info)
                     .school(school)
                     .email(email)
                     .major(major)
                     .build();
-        }
-
-        public static UserRegistDto of(User user) {
-            return new UserRegistDto(user.getUsername(), user.getPhone(), user.getInfo()
-                    , user.getSchool().getId(), user.getEmail(), user.getMajor());
         }
     }
 
