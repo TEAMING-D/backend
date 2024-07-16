@@ -6,6 +6,7 @@ import com.allin.teaming.Dto.User.UserDto.*;
 import com.allin.teaming.Repository.User.SchoolRepository;
 import com.allin.teaming.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolRepository schoolRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // id로 회원 조회 (마이페이지)
     @Transactional(readOnly = true)
@@ -45,6 +47,13 @@ public class UserService {
     }
 
     // 팀원 검색 (username 으로 회원 조회)
+    @Transactional(readOnly = true)
+    public UserInfoDto getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(UserInfoDto::new)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+    }
+
 
     // 사용자 정보 입력(수정)
     @Transactional
@@ -64,19 +73,24 @@ public class UserService {
     @Transactional
     public IdResponse signUp(UserRegistDto request) {
         if (userRepository.existsByPhone(request.getPhone())) {
-            throw new RuntimeException("이미 가입되어 있는 전화번호 입니다. ");
+            throw new RuntimeException("이미 가입되어 있는 전화번호입니다. ");
         }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("이미 가입되어 있는 이메일입니다. ");
+        }
+
         School school = null;
         if (request.getSchoolID() != null) {
             school = schoolRepository.findById(request.getSchoolID()).get();
         }
-        User user = request.toUser(school);
+        User user = request.toUser(school, bCryptPasswordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         return IdResponse.of(user);
     }
 
     // 탈퇴
-    // !!!수정 예정!!!
+    // TODO: 회원 삭제 시 처리
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)

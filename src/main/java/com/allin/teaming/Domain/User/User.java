@@ -26,6 +26,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -36,6 +37,9 @@ public class User {
     private String info;
 
     private String major;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
 
     @OneToOne(mappedBy = "user")
     private Schedule schedule;

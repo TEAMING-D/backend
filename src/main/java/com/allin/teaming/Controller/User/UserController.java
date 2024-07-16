@@ -4,9 +4,7 @@ import com.allin.teaming.Dto.Response.BasicResponse;
 import com.allin.teaming.Dto.Response.DataResponse;
 import com.allin.teaming.Dto.User.UserDto.*;
 import com.allin.teaming.Service.User.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -34,14 +32,13 @@ public class UserController {
         return ResponseEntity.ok(new DataResponse<List>(userService.getAllUserInfo()));
     }
 
-    // 회원 가입
-    // TODO: Spring Security
-    @PostMapping(path = "/signUp", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends BasicResponse> signUp(
-            @Valid @RequestBody UserRegistDto request
-    ) {
-        return ResponseEntity.ok().body(
-                new DataResponse<IdResponse>(userService.signUp(request)));
+    // 회원 정보 수정
+    @PatchMapping("/{user_id}")
+    public ResponseEntity<? extends BasicResponse> modifyUser(
+            @PathVariable("user_id") Long user_id,
+            @RequestBody UserModifyRequest request) {
+        userService.userModify(user_id, request);
+        return ResponseEntity.ok().build();
     }
 
     // 로그인

@@ -14,7 +14,7 @@ public class Membership {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private ProjectRole role;
 
     private double score;
 
