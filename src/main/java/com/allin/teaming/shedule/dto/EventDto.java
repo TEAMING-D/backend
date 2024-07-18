@@ -1,9 +1,11 @@
 package com.allin.teaming.shedule.dto;
 
 import com.allin.teaming.shedule.domain.Event;
+import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.shedule.domain.Week;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,13 +44,42 @@ public class EventDto {
     // TODO : registDto 개발
     @Getter
     static public class EventRegistDto {
+        @NotBlank
+        private Long scheduleId;
+
         private String title;
-        public Event toEvent() {
-            return  Event.builder()
+        private String info;
+
+        @NotBlank
+        private Week week;
+
+        @NotBlank
+        private LocalTime start_time;
+
+        @NotBlank
+        private LocalTime end_time;
+
+        public Event toEvent(Schedule schedule) {
+            return Event.builder()
+                    .schedule(schedule)
                     .title(title)
+                    .info(info)
+                    .week(week)
+                    .start_time(start_time)
+                    .end_time(end_time)
                     .build();
         }
     }
+
+    @Getter
+    public static class EventModifyDto {
+        private String title;
+        private String info;
+        private Week week;
+        private LocalTime start_time;
+        private LocalTime end_time;
+    }
+
 
     @Getter
     @AllArgsConstructor

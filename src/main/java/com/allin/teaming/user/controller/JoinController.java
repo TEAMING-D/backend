@@ -21,8 +21,7 @@ public class JoinController {
     // TODO: Spring Security
     @PostMapping(path = "/signUp", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> signUp(
-            @Valid @RequestBody UserRegistDto request
-    ) {
+            @Valid @RequestBody UserRegistDto request) {
         return ResponseEntity.ok().body(
                 new DataResponse<IdResponse>(userService.signUp(request)));
     }

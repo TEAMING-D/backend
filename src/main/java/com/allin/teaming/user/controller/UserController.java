@@ -5,6 +5,7 @@ import com.allin.teaming.Response.DataResponse;
 import com.allin.teaming.user.dto.UserDto.*;
 import com.allin.teaming.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,18 +34,17 @@ public class UserController {
     }
 
     // 회원 정보 수정
-    @PatchMapping("/{user_id}")
+    @PatchMapping(value = "/{user_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyUser(
             @PathVariable("user_id") Long user_id,
             @RequestBody UserModifyRequest request) {
-        userService.userModify(user_id, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new DataResponse<>(userService.userModify(user_id, request)));
     }
 
     // 로그아웃
 
     // 회원 탈퇴
-    @DeleteMapping(path = "/{user_id}")
+    @DeleteMapping("/{user_id}")
     public ResponseEntity<? extends BasicResponse> deleteUser(
             @PathVariable("user_id") Long id) {
         userService.deleteUser(id);
