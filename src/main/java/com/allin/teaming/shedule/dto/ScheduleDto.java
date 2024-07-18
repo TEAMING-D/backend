@@ -4,6 +4,7 @@ import com.allin.teaming.shedule.domain.Event;
 import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.user.domain.User;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +40,9 @@ public class ScheduleDto {
     static public class ScheduleCreateDto {
         private String title;
 
-        @NotBlank
+        // Long 타입에는 notnull 적용해야 함
+        // String 타입에는 notBlank
+        @NotNull
         private Long userId;
 
         public Schedule toSchedule(User user) {

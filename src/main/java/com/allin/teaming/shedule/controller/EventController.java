@@ -27,7 +27,7 @@ public class EventController {
     }
 
     // schedule id로 전체 조회
-    @GetMapping("{schedule_id")
+    @GetMapping("{schedule_id}")
     public ResponseEntity<? extends BasicResponse> getAllEventByScheduleID(
             @PathVariable("schedule_id") Long id) {
         return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByScheduleId(id)));

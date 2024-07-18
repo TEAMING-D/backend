@@ -6,6 +6,7 @@ import com.allin.teaming.shedule.repository.ScheduleRepository;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class ScheduleService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
         Schedule schedule = request.toSchedule(user);
+        scheduleRepository.save(schedule);
         return IdResponse.of(schedule);
     }
 

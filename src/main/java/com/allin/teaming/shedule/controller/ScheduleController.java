@@ -24,7 +24,7 @@ public class ScheduleController {
     }
 
     // userId로 조회
-    @GetMapping("/{user_id}")
+    @GetMapping("/user/{user_id}")
     public ResponseEntity<? extends BasicResponse> getScheduleByUserId(
             @PathVariable("user_id") Long id) {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUserId(id)));
