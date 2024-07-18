@@ -1,9 +1,9 @@
 package com.allin.teaming.Controller;
 
-import com.allin.teaming.Controller.User.UserController;
-import com.allin.teaming.Domain.User.User;
-import com.allin.teaming.Dto.User.UserDto.*;
-import com.allin.teaming.Service.User.UserService;
+import com.allin.teaming.user.controller.UserController;
+import com.allin.teaming.user.domain.User;
+import com.allin.teaming.user.dto.UserDto.*;
+import com.allin.teaming.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
