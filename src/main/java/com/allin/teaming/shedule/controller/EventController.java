@@ -27,10 +27,17 @@ public class EventController {
     }
 
     // schedule id로 전체 조회
-    @GetMapping("{schedule_id}")
+    @GetMapping("/schedule/{schedule_id}")
     public ResponseEntity<? extends BasicResponse> getAllEventByScheduleID(
             @PathVariable("schedule_id") Long id) {
         return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByScheduleId(id)));
+    }
+
+    // user id로 전체 조회
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getAllEventByUserID(
+            @PathVariable("user_id") Long id) {
+        return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByUserID(id)));
 
     }
 

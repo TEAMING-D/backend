@@ -3,9 +3,8 @@ package com.allin.teaming.shedule.dto;
 import com.allin.teaming.shedule.domain.Event;
 import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.shedule.domain.Week;
-import com.allin.teaming.user.domain.User;
-import com.allin.teaming.user.dto.UserDto;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,22 +40,23 @@ public class EventDto {
         }
     }
 
-    // TODO : registDto 개발
     @Getter
     static public class EventRegistDto {
-        @NotBlank
+        @NotNull
         private Long scheduleId;
 
         private String title;
         private String info;
 
-        @NotBlank
+        @NotNull
         private Week week;
 
-        @NotBlank
+        @NotNull
+        @JsonFormat(pattern = "HH:mm")
         private LocalTime start_time;
 
-        @NotBlank
+        @NotNull
+        @JsonFormat(pattern = "HH:mm")
         private LocalTime end_time;
 
         public Event toEvent(Schedule schedule) {
@@ -76,7 +76,11 @@ public class EventDto {
         private String title;
         private String info;
         private Week week;
+
+        @JsonFormat(pattern = "HH:mm")
         private LocalTime start_time;
+
+        @JsonFormat(pattern = "HH:mm")
         private LocalTime end_time;
     }
 
