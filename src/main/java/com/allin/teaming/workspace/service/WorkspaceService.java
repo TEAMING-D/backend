@@ -35,10 +35,20 @@ public class WorkspaceService {
     /**
      * workspace의 id로 Workspace 조회
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+
     public WorkspaceDTO getWorkspaceById(Long id) {
         Workspace workspace = findWorkspaceById(id);
         return workspaceMapper.toDTO(workspace);
+    }
+    */
+
+    /**
+     * 주어진 id(Workspace)로 Workspace를 조회하여 반환
+     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
+     */
+    private Workspace findWorkspaceById(Long id) {
+        return workspaceRepository.findById(id)
+                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
     }
 
     // Workspace 생성
@@ -68,7 +78,9 @@ public class WorkspaceService {
         workspaceRepository.delete(workspace);
     }
 
-    // 주어진 userId로 모든 Workspace 조회
+    /**
+     * 주어진 userId로 모든 Workspace 조회
+     */
     public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
         List<Workspace> workspaces = workspaceRepository.findAllByUserId(userId);
         return workspaces.stream()
@@ -78,7 +90,6 @@ public class WorkspaceService {
 
     /**
      * 주어진 workspaceId의 모든 멤버 조회
-     * @param workspaceId 조회할 Workspace의 id
      * @return 해당 Workspace의 모든 멤버의 DTO 리스트
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
      */
@@ -91,10 +102,8 @@ public class WorkspaceService {
 
     /**
      * 주어진 workspaceId의 모든 멤버의 스케줄 조회
-     * @param workspaceId 조회할 Workspace의 id
-     * @return 해당 Workspace의 모든 멤버의 스케줄의 DTO 리스트
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+
     public List<ScheduleDTO> getAllMembersSchedules(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         return workspace.getMembers().stream()
@@ -102,28 +111,17 @@ public class WorkspaceService {
                 .map(scheduleMapper::toDTO) // ScheduleMapper 필요에 따라 추가
                 .collect(Collectors.toList());
     }
+     */
 
     /**
      * 주어진 workspaceId의 모든 멤버의 시간표 추합 조회
-     * @param workspaceId 조회할 Workspace의 id
      * @return 해당 Workspace의 모든 멤버의 시간표를 추합한 DTO 리스트
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+
     public List<TimeTableDTO> aggregateAllMembersTimeTables(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
-        // 시간표를 추합하는 로직 구현
-        // 예를 들어, workspace의 모든 멤버의 시간표를 합산하여 반환
-        // 구현 필요
+        // 스케쥴 구현 이후 구현 예정
     }
-
-    /**
-     * 주어진 id로 Workspace를 조회하여 반환
-     * @param id 조회할 Workspace의 id
-     * @return 해당 id에 해당하는 Workspace 객체
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
      */
-    private Workspace findWorkspaceById(Long id) {
-        return workspaceRepository.findById(id)
-                .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
-    }
+
 }
