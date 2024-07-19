@@ -7,7 +7,7 @@ public class MeetingService {
 
     // userId로 전체 조회
 
-    // List<Long> userId 를 사용해서 겹치는 회의 전체 조회
+    // List<Long> userId 를 사용해서 가능한 회의 전체 조회
 
     // userid를 사용해서 schedule 조회 후, 가능한 회의 시간 도출
 

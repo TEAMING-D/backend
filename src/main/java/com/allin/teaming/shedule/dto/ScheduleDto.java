@@ -1,9 +1,7 @@
 package com.allin.teaming.shedule.dto;
 
-import com.allin.teaming.shedule.domain.Event;
 import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.user.domain.User;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
