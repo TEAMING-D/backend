@@ -2,8 +2,8 @@ package com.allin.teaming.workspace.service;
 
 import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
+import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.workspace.exception.WorkspaceNotFoundException;
-import com.allin.teaming.workspace.mapper.WorkspaceMapper;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,14 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// workspace 서비스 클래스
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
-    private final WorkspaceMapper workspaceMapper;
 
     /**
      * 모든 Workspace 조회
@@ -28,19 +26,18 @@ public class WorkspaceService {
     public List<WorkspaceDTO> getAllWorkspaces() {
         List<Workspace> workspaces = workspaceRepository.findAll();
         return workspaces.stream()
-                .map(workspaceMapper::toDTO)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     /**
      * workspace의 id로 Workspace 조회
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-
+     */
     public WorkspaceDTO getWorkspaceById(Long id) {
         Workspace workspace = findWorkspaceById(id);
-        return workspaceMapper.toDTO(workspace);
+        return convertToDTO(workspace);
     }
-    */
 
     /**
      * 주어진 id(Workspace)로 Workspace를 조회하여 반환
@@ -53,9 +50,9 @@ public class WorkspaceService {
 
     // Workspace 생성
     public WorkspaceDTO createWorkspace(WorkspaceDTO workspaceDTO) {
-        Workspace workspace = workspaceMapper.toEntity(workspaceDTO);
+        Workspace workspace = convertToEntity(workspaceDTO);
         Workspace savedWorkspace = workspaceRepository.save(workspace);
-        return workspaceMapper.toDTO(savedWorkspace);
+        return convertToDTO(savedWorkspace);
     }
 
     /**
@@ -64,9 +61,9 @@ public class WorkspaceService {
      */
     public WorkspaceDTO updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
         Workspace existingWorkspace = findWorkspaceById(id);
-        workspaceMapper.updateFromDTO(workspaceDTO, existingWorkspace);
+        updateEntityFromDTO(workspaceDTO, existingWorkspace);
         Workspace updatedWorkspace = workspaceRepository.save(existingWorkspace);
-        return workspaceMapper.toDTO(updatedWorkspace);
+        return convertToDTO(updatedWorkspace);
     }
 
     /**
@@ -84,7 +81,7 @@ public class WorkspaceService {
     public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
         List<Workspace> workspaces = workspaceRepository.findAllByUserId(userId);
         return workspaces.stream()
-                .map(workspaceMapper::toDTO)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -93,35 +90,34 @@ public class WorkspaceService {
      * @return 해당 Workspace의 모든 멤버의 DTO 리스트
      * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
      */
-    public List<WorkspaceDTO> getAllMembersOfWorkspace(Long workspaceId) {
+    public List<Membership> getAllMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
-        return workspace.getMembers().stream()
-                .map(workspaceMapper::toDTO)
-                .collect(Collectors.toList());
+        return workspace.getMembers();
     }
 
-    /**
-     * 주어진 workspaceId의 모든 멤버의 스케줄 조회
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-
-    public List<ScheduleDTO> getAllMembersSchedules(Long workspaceId) {
-        Workspace workspace = findWorkspaceById(workspaceId);
-        return workspace.getMembers().stream()
-                .flatMap(member -> member.getSchedule().stream())
-                .map(scheduleMapper::toDTO) // ScheduleMapper 필요에 따라 추가
-                .collect(Collectors.toList());
+    // Workspace를 WorkspaceDTO로 변환하는 메서드
+    private WorkspaceDTO convertToDTO(Workspace workspace) {
+        WorkspaceDTO dto = new WorkspaceDTO();
+        dto.setId(workspace.getId());
+        dto.setName(workspace.getName());
+        dto.setDescription(workspace.getDescription());
+        return dto;
     }
-     */
 
-    /**
-     * 주어진 workspaceId의 모든 멤버의 시간표 추합 조회
-     * @return 해당 Workspace의 모든 멤버의 시간표를 추합한 DTO 리스트
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-
-    public List<TimeTableDTO> aggregateAllMembersTimeTables(Long workspaceId) {
-        Workspace workspace = findWorkspaceById(workspaceId);
-        // 스케쥴 구현 이후 구현 예정
+    // WorkspaceDTO를 Workspace 엔티티로 변환하는 메서드
+    private Workspace convertToEntity(WorkspaceDTO workspaceDTO) {
+        Workspace workspace = new Workspace();
+        workspace.setId(workspaceDTO.getId());
+        workspace.setName(workspaceDTO.getName());
+        workspace.setDescription(workspaceDTO.getDescription());
+        // 필요한 다른 필드들도 여기에 추가
+        return workspace;
     }
-     */
 
+    // WorkspaceDTO의 내용을 기존 Workspace 엔티티에 복사하는 메서드
+    private void updateEntityFromDTO(WorkspaceDTO workspaceDTO, Workspace workspace) {
+        workspace.setName(workspaceDTO.getName());
+        workspace.setDescription(workspaceDTO.getDescription());
+        // 필요한 다른 필드들도 여기에 추가
+    }
 }

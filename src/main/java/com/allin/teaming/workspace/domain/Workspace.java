@@ -21,6 +21,7 @@ public class Workspace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
 
     @OneToMany(mappedBy = "workspace")
     private List<Membership> memberships = new ArrayList<>();
@@ -32,4 +33,8 @@ public class Workspace {
     private List<Work> works = new ArrayList<>();
 
     private LocalDate created_date;
+
+    public List<Membership> getMembers() {
+        return memberships;
+    }
 }
