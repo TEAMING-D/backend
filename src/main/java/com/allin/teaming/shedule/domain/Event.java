@@ -14,8 +14,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Event {
-    // Todo : 자식 클래스들 구현
+public class Event {
     @Id
     @Column(name = "event_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

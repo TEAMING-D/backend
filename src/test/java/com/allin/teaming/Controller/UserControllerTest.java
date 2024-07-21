@@ -46,7 +46,7 @@ public class UserControllerTest {
     User user4 = getUser("user4", "010-4444-4444", "DDDD", "email4@email.com", "IT공학전공");
     User user5 = getUser("user5", "010-5555-5555", "EEEE", "email5@email.com", "IT공학전공");
     List<User> users = new ArrayList<>();
-    List<UserInfoDto> userDtos = new ArrayList<>();
+    List<UserDetailDto> userDtos = new ArrayList<>();
 
 
     @BeforeEach
@@ -56,7 +56,7 @@ public class UserControllerTest {
         MockitoAnnotations.openMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new UserController(userService)).build();
         users = Arrays.asList(user1, user2, user3, user4, user5);
-        userDtos = users.stream().map(UserInfoDto::of).collect(Collectors.toList());
+        userDtos = users.stream().map(UserDetailDto::of).collect(Collectors.toList());
 
     }
 
@@ -68,7 +68,7 @@ public class UserControllerTest {
     @DisplayName("아이디로 단일 조회")
     public void getUserByIdTest() throws Exception {
         //given
-        given(userService.getUserInfoById(any())).willReturn(UserInfoDto.of(user1));
+        given(userService.getUserInfoById(any())).willReturn(UserDetailDto.of(user1));
 
         //when
         ResultActions actions = mvc.perform(get("/user/1"));

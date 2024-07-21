@@ -1,6 +1,5 @@
 package com.allin.teaming.shedule.service;
 
-import com.allin.teaming.Response.PatchHelper;
 import com.allin.teaming.shedule.domain.Event;
 import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.shedule.dto.EventDto.*;
@@ -66,6 +65,7 @@ public class EventService {
 
     // event 수정
     // Todo : patch 구현
+    // TODO : event 수정 시 회의 도출 어케 할건지
     @Transactional
     public IdResponse modifyEvent(Long id, EventModifyDto request) {
         Event event = eventRepository.findById(id)

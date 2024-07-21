@@ -32,6 +32,7 @@ public class UserDto {
 
         private String info;
         private Long schoolID;
+
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
         private String major;
@@ -54,7 +55,8 @@ public class UserDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserInfoDto {
+    @Builder
+    public static class UserDetailDto {
         private Long id;
         private String email;
         private String username;
@@ -63,17 +65,33 @@ public class UserDto {
         private Long schoolID;
         private String major;
 
-        public static UserInfoDto of(User user) {
-            return modelMapper.map(user, UserInfoDto.class);}
+        public static UserDetailDto of(User user) {
+            return UserDetailDto.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .username(user.getUsername())
+                    .info(user.getInfo())
+                    .schoolID(user.getSchool().getId())
+                    .major(user.getMajor())
+                    .build();
+        }
+    }
 
-        public UserInfoDto(User user) {
-            this.id = user.getId();
-            this.email = user.getEmail();
-            this.username = user.getUsername();
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserScheduleDto {
+        private Long id;
+        private String username;
+        private Long scheduleId;
 
-            this.info = user.getInfo();
-            this.schoolID = (user.getSchool() != null) ? user.getSchool().getId() : null;
-            this.major = user.getMajor();
+        public static UserScheduleDto of(User user) {
+            return UserScheduleDto.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .scheduleId(user.getSchedule().getId())
+                    .build();
         }
     }
 

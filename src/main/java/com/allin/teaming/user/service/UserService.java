@@ -22,35 +22,35 @@ public class UserService {
 
     // id로 회원 조회 (마이페이지)
     @Transactional(readOnly = true)
-    public UserInfoDto getUserInfoById(Long userId) {
+    public UserDetailDto getUserInfoById(Long userId) {
         return userRepository.findById(userId)
-                .map(UserInfoDto::new)
+                .map(UserDetailDto::of)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
     // 이메일로 회원조회
     @Transactional(readOnly = true)
-    public UserInfoDto getUserByEmail(String email) {
+    public UserDetailDto getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(UserInfoDto::new)
+                .map(UserDetailDto::of)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
     // 회원 전체 조회
     @Transactional(readOnly = true)
-    public List<UserInfoDto> getAllUserInfo() {
+    public List<UserDetailDto> getAllUserInfo() {
         List<User> users = userRepository.findAll();
 
         return users.stream()
-                .map(UserInfoDto::new)
+                .map(UserDetailDto::of)
                 .collect(Collectors.toList());
     }
 
     // 팀원 검색 (username 으로 회원 조회)
     @Transactional(readOnly = true)
-    public UserInfoDto getUserByUsername(String username) {
+    public UserDetailDto getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .map(UserInfoDto::new)
+                .map(UserDetailDto::of)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
