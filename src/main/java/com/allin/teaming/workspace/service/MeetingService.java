@@ -188,7 +188,8 @@ public class MeetingService {
     // 회의 삭제
     @Transactional
     public void deleteMeeting(Long id) {
-        meetingRepository.delete(getMeeting(id));
+        Meeting meeting = getMeeting(id);
+        meetingRepository.delete(meeting);
 
         List<MeetingParticipant> meetingParticipants = meetingParticipantRepository.findByMeeting(meeting);
         meetingParticipantRepository.deleteAllById(meetingParticipants.stream().map(MeetingParticipant::getId).toList());
