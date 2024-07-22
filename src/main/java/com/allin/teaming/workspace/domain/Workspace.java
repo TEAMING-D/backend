@@ -19,9 +19,17 @@ public class Workspace {
     @Id
     @Column(name = "workspace_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userid;
     private String name;
     private String description;
+
+    public Long getId() {
+        return userid;
+    }
+
+    public void setId(Long id) {
+        this.userid = id;
+    }
 
     @OneToMany(mappedBy = "workspace")
     private List<Membership> memberships = new ArrayList<>();

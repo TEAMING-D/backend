@@ -79,7 +79,7 @@ public class WorkspaceService {
      * 주어진 userId로 모든 Workspace 조회
      */
     public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
-        List<Workspace> workspaces = workspaceRepository.findAllByUserId(userId);
+        List<Workspace> workspaces = workspaceRepository.findAllByUserid(userId);
         return workspaces.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -110,7 +110,6 @@ public class WorkspaceService {
         workspace.setId(workspaceDTO.getId());
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
-        // 필요한 다른 필드들도 여기에 추가
         return workspace;
     }
 
@@ -118,6 +117,5 @@ public class WorkspaceService {
     private void updateEntityFromDTO(WorkspaceDTO workspaceDTO, Workspace workspace) {
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
-        // 필요한 다른 필드들도 여기에 추가
     }
 }

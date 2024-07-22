@@ -1,6 +1,6 @@
 package com.allin.teaming.workspace.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class MeetingDTO {
@@ -8,8 +8,8 @@ public class MeetingDTO {
     private Long id;
     private String title;  // 이름에 맞게 수정
     private String description; // 이 필드가 존재해야 합니다요시 추가
-    private LocalTime startTime;  // 필드에 맞게 수정
-    private LocalTime endTime;    // 필드에 맞게 수정
+    private LocalDateTime startTime;  // 필드에 맞게 수정
+    private LocalDateTime endTime;    // 필드에 맞게 수정
     private Long workspaceId;
 
     // 기본 생성자
@@ -17,7 +17,7 @@ public class MeetingDTO {
     }
 
     // 필드를 초기화하는 생성자
-    public MeetingDTO(Long id, String title, String description, LocalTime startTime, LocalTime endTime, Long workspaceId) {
+    public MeetingDTO(Long id, String title, String description, LocalDateTime startTime, LocalDateTime endTime, Long workspaceId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -51,19 +51,19 @@ public class MeetingDTO {
         this.description = description;
     }
 
-    public LocalTime getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalTime getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 

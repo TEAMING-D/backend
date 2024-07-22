@@ -35,9 +35,7 @@ public class MeetingService {
 
     /**
      * 회의 ID로 회의 조회
-     * @param id 회의 ID
      * @return 조회된 회의의 DTO
-     * @throws MeetingNotFoundException 회의가 존재하지 않을 경우 예외 발생
      */
     public MeetingDTO getMeetingById(Long id) {
         Meeting meeting = meetingRepository.findById(id)
@@ -49,11 +47,10 @@ public class MeetingService {
     private MeetingDTO convertToDTO(Meeting meeting) {
         MeetingDTO dto = new MeetingDTO();
         dto.setId(meeting.getId());
-        dto.setTitle(meeting.getTitle());
         dto.setDescription(meeting.getDescription());
         dto.setStartTime(meeting.getStartTime());
         dto.setEndTime(meeting.getEndTime());
-        dto.setWorkspaceId(meeting.getWorkspace().getId()); // 워크스페이스 ID도 포함시킬 수 있음
+        //dto.setWorkspaceId(meeting.getWorkspace().getId());
         return dto;
     }
 }
