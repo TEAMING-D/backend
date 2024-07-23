@@ -1,39 +1,72 @@
 package com.allin.teaming.workspace.domain;
 
-import com.allin.teaming.shedule.domain.Week;
-import com.allin.teaming.user.domain.MeetingParticipant;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import java.time.LocalDateTime;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Getter
-@NoArgsConstructor
 public class Meeting {
+
     @Id
-    @Column(name = "meeting_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // 엔티티 식별자
+
+    private String title;
+    private String description;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "workspace_id")
-    private Workspace workspace;
+    private Workspace workspace;  // 연관된 Workspace 엔티티
 
-    private String name;
+    // Getter 및 Setter 메소드
 
-    @Enumerated(EnumType.STRING)
-    private Week week;
+    public Long getId() {
+        return id;
+    }
 
-    private LocalTime start_time;
-    private LocalTime end_time;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    private LocalDate created_at;
+    public String getTitle() {
+        return title;
+    }
 
-    @OneToMany(mappedBy = "meeting")
-    private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
 }
