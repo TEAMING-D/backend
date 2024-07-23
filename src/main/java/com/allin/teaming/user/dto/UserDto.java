@@ -3,8 +3,11 @@ package com.allin.teaming.user.dto;
 import com.allin.teaming.user.domain.RoleType;
 import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
+
 import jakarta.validation.constraints.Email;
+
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class UserDto {

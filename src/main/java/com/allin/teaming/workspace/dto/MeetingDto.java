@@ -1,77 +1,103 @@
 package com.allin.teaming.workspace.dto;
 
-import java.time.LocalDateTime;
+
+import com.allin.teaming.shedule.domain.Week;
+import com.allin.teaming.user.domain.MeetingParticipant;
+import com.allin.teaming.user.dto.UserDto.*;
+import com.allin.teaming.workspace.domain.Meeting;
+import com.allin.teaming.workspace.domain.Workspace;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MeetingDTO {
+public class MeetingDto {
 
-    private Long id;
-    private String title;  // 이름에 맞게 수정
-    private String description; // 이 필드가 존재해야 합니다요시 추가
-    private LocalDateTime startTime;  // 필드에 맞게 수정
-    private LocalDateTime endTime;    // 필드에 맞게 수정
-    private Long workspaceId;
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    static public class MeetingDetailDto {
+        private Long id;
+        private Long workspaceId;
+        private String title;
+        private boolean complete;
+        private Week week;
+        private LocalTime start_time;
+        private LocalTime end_time;
+        List<UserScheduleDto> meetingParticipantsId = new ArrayList<>();
 
-    // 기본 생성자
-    public MeetingDTO() {
+        public static MeetingDetailDto of(Meeting meeting) {
+            return MeetingDetailDto.builder()
+                    .id(meeting.getId())
+                    .workspaceId(meeting.getWorkspace().getId())
+                    .title(meeting.getTitle())
+                    .complete(meeting.isComplete())
+                    .week(meeting.getWeek())
+                    .start_time(meeting.getStart_time())
+                    .end_time(meeting.getEnd_time())
+                    .build();
+        }
     }
 
-    // 필드를 초기화하는 생성자
-    public MeetingDTO(Long id, String title, String description, LocalDateTime startTime, LocalDateTime endTime, Long workspaceId) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.workspaceId = workspaceId;
+    @Getter
+    static public class MeetingCreateDto {
+        private Long workspaceId;
+        private String title;
+        private Week week;
+        private LocalTime start_time;
+        private LocalTime end_time;
+        private List<Long> userIds = new ArrayList<>();
+        public Meeting toMeeting(Workspace workspace, List<MeetingParticipant> participants) {
+            return Meeting.builder()
+                    .workspace(workspace)
+                    .title(title)
+                    .week(week)
+                    .start_time(start_time)
+                    .end_time(end_time)
+                    .complete(false)
+                    .meetingParticipants(participants)
+                    .build();
+        }
+
     }
 
-    // Getter 및 Setter 메서드
-    public Long getId() {
-        return id;
+    @Builder
+    @Getter
+    static public class AvailableMeetingTime {
+        private LocalTime start_time;
+        private LocalTime end_time;
+        private Week week;
+        private List<Long> userIds;
+        private List<UserScheduleDto> userScheduleDtos = new ArrayList<>();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Getter
+    static public class MeetingTitleModifyDto {
+        private Long id;
+        private String title;
     }
 
-    public String getTitle() {
-        return title;
+    @Getter
+    static public class MeetingTimeModifyDto {
+        private Long id;
+        private Week week;
+        private LocalTime start_time;
+        private LocalTime end_time;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public Long getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(Long workspaceId) {
-        this.workspaceId = workspaceId;
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IdResponse{
+        private Long id;
+        public static IdResponse of(Meeting meeting) {
+            return new IdResponse(meeting.getId());
+        }
     }
 }

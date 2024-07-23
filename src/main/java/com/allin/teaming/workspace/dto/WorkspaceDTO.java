@@ -18,7 +18,7 @@ public class WorkspaceDTO {
         this.id = id;
         this.name = name;
         this.description = description;
-    }c
+    }
 
     // Getter 및 Setter 메서드
     public Long getId() {
