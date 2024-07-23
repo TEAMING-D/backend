@@ -1,72 +1,58 @@
 package com.allin.teaming.workspace.domain;
 
+import com.allin.teaming.shedule.domain.Week;
+import com.allin.teaming.user.domain.MeetingParticipant;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Meeting {
-
     @Id
+    @Column(name = "meeting_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // 엔티티 식별자
-
-    private String title;
-    private String description;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "workspace_id")
-    private Workspace workspace;  // 연관된 Workspace 엔티티
+    private Workspace workspace;
 
-    // Getter 및 Setter 메소드
+    private String title;
 
-    public Long getId() {
-        return id;
+    @Enumerated(EnumType.STRING)
+    private Week week;
+
+    private LocalTime start_time;
+    private LocalTime end_time;
+
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
+
+    private boolean complete;
+
+    public Meeting complete() {
+        this.complete = false;
+        return this;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void updateTime(Week week, LocalTime start_time, LocalTime end_time) {
+        this.week = week;
+        this.start_time = start_time;
+        this.end_time = end_time;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    public void updateTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public Workspace getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
     }
 }

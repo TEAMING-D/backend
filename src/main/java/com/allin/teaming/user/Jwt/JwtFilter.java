@@ -23,7 +23,6 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
 
-        System.out.println("여기까지는 됨!");
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             System.out.println("token null");
 
@@ -38,7 +37,6 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        System.out.println("여기는??");
 
         String email = jwtUtil.getEmail(token);
         String roleString = jwtUtil.getRole(token);
@@ -50,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .password("temp")
                 .username("temp")
                 .build();
-        System.out.println("2222");
+
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
         // 스프링 시큐리티 인증 토큰 생성
