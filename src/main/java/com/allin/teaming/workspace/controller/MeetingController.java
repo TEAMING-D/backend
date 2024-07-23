@@ -33,10 +33,10 @@ public class MeetingController {
     }
 
     // user id 로 전체 조회
-    @GetMapping("/user/{user_id}")
+    @GetMapping("/user")
     public ResponseEntity<? extends BasicResponse> getAllMeetingByUserId(
-            @PathVariable("user_id") Long id) {
-        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(id)));
+            @RequestBody WorkspaceAndUser workspaceAndUser) {
+        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(workspaceAndUser)));
     }
 
     // Title로 전체 조회
@@ -62,14 +62,14 @@ public class MeetingController {
     }
 
     // 회의 시간 수정
-    @PutMapping
+    @PutMapping("/modify/time")
     public ResponseEntity<? extends BasicResponse> modifyTimeMeeting(
             @RequestBody MeetingTimeModifyDto request) {
         return ResponseEntity.ok(new DataResponse<>(meetingService.modifyMeetingTime(request)));
     }
 
     // 회의 이름 수정
-    @PutMapping
+    @PutMapping("/modify/title")
     public ResponseEntity<? extends BasicResponse> modifyTitleMeeting(
             @RequestBody MeetingTitleModifyDto request) {
         return ResponseEntity.ok(new DataResponse<>(meetingService.modifyMeetingTitle(request)));

@@ -69,12 +69,15 @@ public class MeetingService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회의를 조회할 수 없습니다. "));
     }
 
-    // userId로 전체 조회
+    // userId와 Workspace_id로 전체 조회
     @Transactional(readOnly = true)
-    public List<MeetingDetailDto> getAllMeetingByUserId(Long id) {
-        User user = getUser(id);
-        return meetingRepository.findByUser(user).stream()
-                .map(MeetingDetailDto::of).toList();
+    public List<MeetingDetailDto> getAllMeetingByUserId(WorkspaceAndUser workspaceAndUser) {
+        List<MeetingParticipant> users = meetingParticipantRepository.findByUser(getUser(workspaceAndUser.getUser_id()));
+        Workspace workspace = workspaceRepository.findById(workspaceAndUser.getWorkspace_id())
+                .orElseThrow(() -> new IllegalArgumentException("해당 워크 스페이스가 존재하지 않습니다. "));
+
+        users.stream().filter((user) -> user.getMeeting().getWorkspace() == workspace);
+        return users.stream().map(MeetingParticipant::getMeeting).map(MeetingDetailDto::of).toList();
     }
 
     // List<Long> userId 를 사용해서 가능한 회의 시간 전체 조회
