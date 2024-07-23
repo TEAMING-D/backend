@@ -90,6 +90,12 @@ public class MeetingDto {
         private LocalTime end_time;
     }
 
+    @Getter
+    static public class WorkspaceAndUser {
+        private Long workspace_id;
+        private Long user_id;
+    }
+
 
     @Getter
     @AllArgsConstructor
