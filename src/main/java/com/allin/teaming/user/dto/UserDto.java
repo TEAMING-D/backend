@@ -6,12 +6,8 @@ import com.allin.teaming.user.domain.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.modelmapper.ModelMapper;
 
 public class UserDto {
-
-    private static ModelMapper modelMapper = new ModelMapper();
-
     // 회원 가입
     @Getter
     @NoArgsConstructor

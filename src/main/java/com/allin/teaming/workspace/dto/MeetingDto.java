@@ -25,7 +25,7 @@ public class MeetingDto {
     static public class MeetingDetailDto {
         private Long id;
         private Long workspaceId;
-        private String name;
+        private String title;
         private boolean complete;
         private Week week;
         private LocalTime start_time;
@@ -36,7 +36,7 @@ public class MeetingDto {
             return MeetingDetailDto.builder()
                     .id(meeting.getId())
                     .workspaceId(meeting.getWorkspace().getId())
-                    .name(meeting.getName())
+                    .title(meeting.getTitle())
                     .complete(meeting.isComplete())
                     .week(meeting.getWeek())
                     .start_time(meeting.getStart_time())
@@ -48,15 +48,15 @@ public class MeetingDto {
     @Getter
     static public class MeetingCreateDto {
         private Long workspaceId;
-        private String name;
+        private String title;
         private Week week;
         private LocalTime start_time;
         private LocalTime end_time;
-        private List<User> users = new ArrayList<>();
+        private List<Long> userIds = new ArrayList<>();
         public Meeting toMeeting(Workspace workspace, List<MeetingParticipant> participants) {
             return Meeting.builder()
                     .workspace(workspace)
-                    .name(name)
+                    .title(title)
                     .week(week)
                     .start_time(start_time)
                     .end_time(end_time)
@@ -76,6 +76,21 @@ public class MeetingDto {
         private List<Long> userIds;
         private List<UserScheduleDto> userScheduleDtos = new ArrayList<>();
     }
+
+    @Getter
+    static public class MeetingTitleModifyDto {
+        private Long id;
+        private String title;
+    }
+
+    @Getter
+    static public class MeetingTimeModifyDto {
+        private Long id;
+        private Week week;
+        private LocalTime start_time;
+        private LocalTime end_time;
+    }
+
 
     @Getter
     @AllArgsConstructor

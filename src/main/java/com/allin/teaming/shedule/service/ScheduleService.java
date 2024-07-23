@@ -6,7 +6,6 @@ import com.allin.teaming.shedule.repository.ScheduleRepository;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

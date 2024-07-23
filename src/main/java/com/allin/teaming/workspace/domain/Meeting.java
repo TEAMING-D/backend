@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class Meeting {
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
-    private String name;
+    private String title;
 
     @Enumerated(EnumType.STRING)
     private Week week;
@@ -36,7 +36,7 @@ public class Meeting {
     private LocalTime start_time;
     private LocalTime end_time;
 
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
 
     private boolean complete;
@@ -44,5 +44,15 @@ public class Meeting {
     public Meeting complete() {
         this.complete = false;
         return this;
+    }
+
+    public void updateTime(Week week, LocalTime start_time, LocalTime end_time) {
+        this.week = week;
+        this.start_time = start_time;
+        this.end_time = end_time;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }

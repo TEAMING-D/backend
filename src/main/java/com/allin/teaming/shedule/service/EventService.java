@@ -57,7 +57,6 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 스케줄이 존재하지 않습니다. "));
 
         // Todo: 겹치는 시간 있으면 오류 발생시키기
-
         Event event = request.toEvent(schedule);
         eventRepository.save(event);
         return IdResponse.of(event);

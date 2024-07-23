@@ -5,9 +5,13 @@ import com.allin.teaming.user.domain.MeetingParticipant;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Meeting;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@Builder
 public class MeetingParticipantDto {
     private Long userId;
     private Long meetingId;
@@ -17,6 +21,20 @@ public class MeetingParticipantDto {
                 .user(user)
                 .meeting(meeting)
                 .build();
+    }
+
+    public static MeetingParticipantDto of(MeetingParticipant meetingParticipant) {
+        return MeetingParticipantDto.builder()
+                .userId(meetingParticipant.getUser().getId())
+                .meetingId(meetingParticipant.getMeeting().getId())
+                .build();
+
+    }
+
+    @Getter
+    public static class MeetingParticipantDeleteDto {
+        private Long meetingId;
+        private List<Long> participantsId;
     }
 
     @Getter

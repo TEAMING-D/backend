@@ -8,16 +8,18 @@ import com.allin.teaming.shedule.repository.ScheduleRepository;
 import com.allin.teaming.user.domain.MeetingParticipant;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.MeetingParticipantDto;
+import com.allin.teaming.user.dto.MeetingParticipantDto.MeetingParticipantDeleteDto;
 import com.allin.teaming.user.dto.UserDto.*;
 import com.allin.teaming.user.repository.MeetingParticipantRepository;
-import com.allin.teaming.user.repository.MeetingRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import com.allin.teaming.workspace.domain.Meeting;
 import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.dto.MeetingDto;
 import com.allin.teaming.workspace.dto.MeetingDto.*;
+import com.allin.teaming.workspace.repository.MeetingRepository;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
@@ -25,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Service
 public class MeetingService {
 
     private final MeetingRepository meetingRepository;
@@ -37,6 +40,11 @@ public class MeetingService {
     Meeting getMeeting(Long id) {
         return meetingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회의를 찾을 수 없습니다. "));
+    }
+
+    User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
     }
 
     // id로 미팅 조회
@@ -53,19 +61,28 @@ public class MeetingService {
                 .map(MeetingDetailDto::of).toList();
     }
 
+    // Title로 조회
+    @Transactional
+    public MeetingDetailDto getMeetingByTitle(String title) {
+        return meetingRepository.findByTitle(title)
+                .map(MeetingDetailDto::of)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회의를 조회할 수 없습니다. "));
+    }
+
     // userId로 전체 조회
     @Transactional(readOnly = true)
     public List<MeetingDetailDto> getAllMeetingByUserId(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 찾을 수 없습니다. "));
+        User user = getUser(id);
         return meetingRepository.findByUser(user).stream()
                 .map(MeetingDetailDto::of).toList();
     }
 
     // List<Long> userId 를 사용해서 가능한 회의 시간 전체 조회
     @Transactional(readOnly = true)
-    public List<AvailableMeetingTime> getAllAvailableMeetingTime(List<User> users) {
+    public List<AvailableMeetingTime> getAllAvailableMeetingTime(List<Long> userIds) {
+        List<User> users = userIds.stream().map(userRepository::findById)
+                .filter(Optional::isPresent).map(Optional::get).toList();
         List<UserScheduleDto> userScheduleDtos = users.stream().map(UserScheduleDto::of).toList();
-        List<Long> userIds = users.stream().map(User::getId).toList();
 
         List<Schedule> schedules = userIds.stream()
                 .map(scheduleRepository::findByUserId)
@@ -90,7 +107,6 @@ public class MeetingService {
         for (Week week: weeks) {
             List<Event> eventList = eventsByWeek.getOrDefault(week, Collections.emptyList());
             LocalTime startTime = LocalTime.of(0, 0);
-            LocalTime endTime = LocalTime.of(0, 0);
 
             for (Event event : eventList) {
                 if (startTime.isBefore(event.getStart_time())) {
@@ -119,15 +135,19 @@ public class MeetingService {
 
     // 회의 생성
     @Transactional
-    public List<MeetingParticipantDto.IdResponse> createMeeting(AvailableMeetingTime availableMeetingTime, MeetingCreateDto request) {
+    public List<MeetingParticipantDto.IdResponse> createMeeting(MeetingCreateDto request) {
         Workspace workspace = workspaceRepository.findById(request.getWorkspaceId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 조회할 수 없습니다. "));
 
+        if (meetingRepository.existsByTitle(request.getTitle())) {
+            throw new RuntimeException("중복된 이름입니다. ");
+        }
+
         Meeting savedMeeting = Meeting.builder()
-                .start_time(availableMeetingTime.getStart_time())
-                .end_time(availableMeetingTime.getEnd_time())
-                .week(availableMeetingTime.getWeek())
-                .name(request.getName())
+                .start_time(request.getStart_time())
+                .end_time(request.getEnd_time())
+                .week(request.getWeek())
+                .title(request.getTitle())
                 .workspace(workspace)
                 .build();
 
@@ -135,8 +155,8 @@ public class MeetingService {
 
         List<MeetingParticipantDto.IdResponse> ids = new ArrayList<>();
 
-        for (Long userId: availableMeetingTime.getUserIds()) {
-            User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다. "));
+        for (Long userId: request.getUserIds()) {
+            User user = getUser(userId);
 
             MeetingParticipant meetingParticipant = MeetingParticipant.builder()
                     .user(user)
@@ -149,11 +169,20 @@ public class MeetingService {
         return ids;
     }
 
-    // TODO : 회의 수정
+    // 시간 수정
     @Transactional
-    public MeetingDto.IdResponse modifyMeeting(Long id) {
-        Meeting meeting = getMeeting(id);
-        return null;
+    public MeetingDto.IdResponse modifyMeetingTime(MeetingTimeModifyDto request) {
+        Meeting meeting = getMeeting(request.getId());
+        meeting.updateTime(request.getWeek(), request.getStart_time(), request.getEnd_time());
+        return MeetingDto.IdResponse.of(meeting);
+    }
+
+    // 이름 수정
+    @Transactional
+    public MeetingDto.IdResponse modifyMeetingTitle(MeetingTitleModifyDto request) {
+        Meeting meeting = getMeeting(request.getId());
+        meeting.updateTitle(request.getTitle());
+        return MeetingDto.IdResponse.of(meeting);
     }
 
     // 회의 완료
@@ -163,22 +192,38 @@ public class MeetingService {
     }
 
     // 회의 참여자 추가
+    @Transactional
+    public MeetingParticipantDto.IdResponse addParticipant(Long meetingId, Long userId) {
+        Meeting meeting = getMeeting(meetingId);
+        User user = getUser(userId);
+        if (meetingParticipantRepository.findByMeetingAndUser(meeting,user).isPresent()) {
+            throw new IllegalArgumentException("사용자가 이미 미팅에 참여하고 있습니다. ");
+        }
+        MeetingParticipant meetingParticipant = MeetingParticipant.builder()
+                .user(user)
+                .meeting(meeting)
+                .build();
+        meetingParticipantRepository.save(meetingParticipant);
+        return MeetingParticipantDto.IdResponse.of(meetingParticipant);
+    }
 
     // 회의 참여자 삭제
     @Transactional
-    public MeetingDto.IdResponse deleteParticipants(Long meetingId, List<Long> participantsId) {
+    public MeetingDto.IdResponse deleteParticipants(MeetingParticipantDeleteDto request) {
         final String PARTICIPANT_NOT_FOUND_MESSAGE = "해당 참여원을 찾을 수 없습니다.";
 
-        Meeting meeting = getMeeting(meetingId);
+        Meeting meeting = getMeeting(request.getMeetingId());
 
         List<MeetingParticipant> participantsToDelete = meetingParticipantRepository
-                .findAllById(participantsId)
-                .stream().filter(participants -> meetingId.equals(participants.getMeeting().getId())).toList();
+                .findAllById(request.getParticipantsId())
+                .stream().filter(participants -> request.getMeetingId().equals(participants.getMeeting().getId())).toList();
 
-        if (participantsToDelete.size() != participantsId.size()) {
+        // 모든 요청된 참여자가 존재하는지 확인
+        if (participantsToDelete.size() != request.getParticipantsId().size()) {
             throw new IllegalArgumentException(PARTICIPANT_NOT_FOUND_MESSAGE);
         }
 
+        // 참여자 삭제
         meetingParticipantRepository.deleteAll(participantsToDelete);
 
         return MeetingDto.IdResponse.of(meeting);
@@ -190,8 +235,5 @@ public class MeetingService {
     public void deleteMeeting(Long id) {
         Meeting meeting = getMeeting(id);
         meetingRepository.delete(meeting);
-
-        List<MeetingParticipant> meetingParticipants = meetingParticipantRepository.findByMeeting(meeting);
-        meetingParticipantRepository.deleteAllById(meetingParticipants.stream().map(MeetingParticipant::getId).toList());
     }
 }
