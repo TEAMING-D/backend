@@ -18,6 +18,7 @@ import java.util.List;
 
 public class MeetingDto {
 
+    // TODO : 회원 이름, 학번, 학교 이름으로 바꿔주기
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
