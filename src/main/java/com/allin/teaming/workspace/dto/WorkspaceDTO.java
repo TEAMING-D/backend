@@ -7,7 +7,6 @@ public class WorkspaceDTO {
 
     private Long id;
     private String name;
-    private String location;
     private String description;
 
     // 기본 생성자
@@ -15,12 +14,11 @@ public class WorkspaceDTO {
     }
 
     // 필드를 초기화하는 생성자
-    public WorkspaceDTO(Long id, String name, String location, String description) {
+    public WorkspaceDTO(Long id, String name, String description) {
         this.id = id;
         this.name = name;
-        this.location = location;
         this.description = description;
-    }
+    }c
 
     // Getter 및 Setter 메서드
     public Long getId() {
@@ -37,14 +35,6 @@ public class WorkspaceDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getDescription() {
