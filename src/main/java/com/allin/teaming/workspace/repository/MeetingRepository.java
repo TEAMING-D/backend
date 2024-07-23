@@ -16,3 +16,4 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     List<Meeting> findByWorkspace(Workspace workspace);
     List<Meeting> findByUser(User user);
 }
+

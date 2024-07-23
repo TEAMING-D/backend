@@ -13,6 +13,8 @@ public class Membership {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String memberName;
+
     @Enumerated(EnumType.STRING)
     private ProjectRole role;
 
