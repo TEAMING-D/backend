@@ -16,4 +16,3 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     boolean existsByTitle(String title);
     List<Meeting> findByWorkspace(Workspace workspace);
 }
-

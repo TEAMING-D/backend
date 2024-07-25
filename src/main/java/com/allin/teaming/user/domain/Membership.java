@@ -3,6 +3,10 @@ package com.allin.teaming.user.domain;
 import com.allin.teaming.workspace.domain.Workspace;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity @Getter
 @NoArgsConstructor
@@ -28,5 +32,10 @@ public class Membership {
     @ManyToOne
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
+
+    public Membership(User user, Workspace workspace) {
+        this.user = user;
+        this.workspace = workspace;
+    }
 
 }
