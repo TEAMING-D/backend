@@ -1,10 +1,14 @@
 package com.allin.teaming.workspace.service;
 
+import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
+import com.allin.teaming.workspace.dto.MembershipDTO;
 import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.workspace.exception.WorkspaceNotFoundException;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
+import com.allin.teaming.user.repository.UserRepository;
+import com.allin.teaming.user.repository.MembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +22,10 @@ import java.util.stream.Collectors;
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
+    private final UserRepository userRepository;
+    private final MembershipRepository membershipRepository;
 
-    /**
-     * 모든 Workspace 조회
-     * @return 모든 Workspace의 DTO 리스트
-     */
+    // 모든 Workspace 조회
     public List<WorkspaceDTO> getAllWorkspaces() {
         List<Workspace> workspaces = workspaceRepository.findAll();
         return workspaces.stream()
@@ -30,19 +33,13 @@ public class WorkspaceService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * workspace의 id로 Workspace 조회
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+    // workspace의 id로 Workspace 조회
     public WorkspaceDTO getWorkspaceById(Long id) {
         Workspace workspace = findWorkspaceById(id);
         return convertToDTO(workspace);
     }
 
-    /**
-     * 주어진 id(Workspace)로 Workspace를 조회하여 반환
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+    // 주어진 id(Workspace)로 Workspace를 조회하여 반환
     private Workspace findWorkspaceById(Long id) {
         return workspaceRepository.findById(id)
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
@@ -55,10 +52,7 @@ public class WorkspaceService {
         return convertToDTO(savedWorkspace);
     }
 
-    /**
-     * Workspace 수정
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+    // Workspace 수정
     public WorkspaceDTO updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
         Workspace existingWorkspace = findWorkspaceById(id);
         updateEntityFromDTO(workspaceDTO, existingWorkspace);
@@ -66,33 +60,54 @@ public class WorkspaceService {
         return convertToDTO(updatedWorkspace);
     }
 
-    /**
-     * 주어진 id(workspace)의 Workspace 삭제
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
+    // 주어진 id(workspace)의 Workspace 삭제
     public void deleteWorkspace(Long id) {
         Workspace workspace = findWorkspaceById(id);
         workspaceRepository.delete(workspace);
     }
 
-    /**
-     * 주어진 userId로 모든 Workspace 조회
-     */
+    // 워크스페이스에 유저 추가
+    public void addUserToWorkspace(Long workspaceId, Long userId) {
+        Workspace workspace = findWorkspaceById(workspaceId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        Membership membership = new Membership(user, workspace);
+
+        membershipRepository.save(membership);
+    }
+
+    // 워크스페이스에서 유저 제거
+    public void removeUserFromWorkspace(Long workspaceId, Long userId) {
+        Workspace workspace = findWorkspaceById(workspaceId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        Membership membership = membershipRepository.findByUserAndWorkspace(user, workspace)
+                .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userId + " in workspaceId: " + workspaceId));
+
+        membershipRepository.delete(membership);
+    }
+
+
+    // 주어진 userId로 모든 Workspace 조회
     public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
-        List<Workspace> workspaces = workspaceRepository.findAllByUserid(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        List<Workspace> workspaces = membershipRepository.findAllByUser(user).stream()
+                .map(Membership::getWorkspace)
+                .collect(Collectors.toList());
         return workspaces.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 주어진 workspaceId의 모든 멤버 조회
-     * @return 해당 Workspace의 모든 멤버의 DTO 리스트
-     * @throws WorkspaceNotFoundException id에 해당하는 Workspace가 없을 경우 예외 발생
-     */
-    public List<Membership> getAllMembersOfWorkspace(Long workspaceId) {
+    // 주어진 workspaceId의 모든 멤버 조회
+    public List<MembershipDTO> getAllMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
-        return workspace.getMembers();
+        return workspace.getMembers().stream()
+                .map(this::convertToMembershipDTO)
+                .collect(Collectors.toList());
     }
 
     // Workspace를 WorkspaceDTO로 변환하는 메서드
@@ -117,5 +132,13 @@ public class WorkspaceService {
     private void updateEntityFromDTO(WorkspaceDTO workspaceDTO, Workspace workspace) {
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
+    }
+
+    private MembershipDTO convertToMembershipDTO(Membership membership) {
+        return new MembershipDTO(
+                membership.getId(),
+                membership.getUser().getId(),
+                membership.getWorkspace().getId()
+        );
     }
 }

@@ -1,7 +1,7 @@
 package com.allin.teaming.workspace.controller;
 
-import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
+import com.allin.teaming.workspace.dto.MembershipDTO;
 import com.allin.teaming.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,20 @@ public class WorkspaceController {
     }
 
     @GetMapping("/{workspaceId}/members")
-    public List<Membership> getAllMembersOfWorkspace(@PathVariable Long workspaceId) {
+    public List<MembershipDTO> getAllMembersOfWorkspace(@PathVariable Long workspaceId) {
         return workspaceService.getAllMembersOfWorkspace(workspaceId);
     }
+
+    @PostMapping("/{workspaceId}/users/{userId}")
+    public ResponseEntity<Void> addUserToWorkspace(@PathVariable Long workspaceId, @PathVariable Long userId) {
+        workspaceService.addUserToWorkspace(workspaceId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{workspaceId}/users/{userId}")
+    public ResponseEntity<Void> removeUserFromWorkspace(@PathVariable Long workspaceId, @PathVariable Long userId) {
+        workspaceService.removeUserFromWorkspace(workspaceId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
