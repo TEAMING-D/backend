@@ -62,7 +62,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
         // 학교 가져오기 -> 리스트에서 선택
-        School school = schoolRepository.findById(request.getSchoolID()).get();
+        School school = schoolRepository.findById(request.getSchoolId()).get();
 
         user.update(request.getUsername(), request.getPhone(), request.getInfo(), school,
                 request.getEmail(), request.getMajor());
@@ -81,8 +81,8 @@ public class UserService {
         }
 
         School school = null;
-        if (request.getSchoolID() != null) {
-            school = schoolRepository.findById(request.getSchoolID()).get();
+        if (request.getSchoolId() != null) {
+            school = schoolRepository.findById(request.getSchoolId()).get();
         }
         User user = request.toUser(school, bCryptPasswordEncoder.encode(request.getPassword()));
         userRepository.save(user);
