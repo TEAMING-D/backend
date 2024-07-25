@@ -20,12 +20,20 @@ public class EventService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
+    Schedule getSchedule(Long id) {
+       return scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 시간표를 조회할 수 없습니다. "));
+    }
+
+    Event getEvent(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이벤트를 조회할 수 없습니다. "));
+    }
+
     // 이벤트 id로 조회
     @Transactional(readOnly = true)
     public EventDetailDto getEventById(Long id) {
-        return eventRepository.findById(id)
-                .map(EventDetailDto::of)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이벤트가 존재하지 않습니다. "));
+        return EventDetailDto.of(getEvent(id));
     }
 
     // schedule id로 전체 조회
@@ -52,11 +60,14 @@ public class EventService {
         if (eventRepository.existsByTitle(request.getTitle())) {
             throw new RuntimeException("이미 존재하는 이벤트 입니다.");
         }
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
+        Schedule schedule = getSchedule(user.getSchedule().getId());
+        // 겹치는 시간 확인
+        if (eventRepository.existsByScheduleAndWeekAndTimeRange(schedule, request.getWeek(), request.getStart_time(), request.getEnd_time())) {
+            throw new RuntimeException("이벤트 시간이 겹칩니다.");
+        }
 
-        Schedule schedule = scheduleRepository.findById(request.getScheduleId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 스케줄이 존재하지 않습니다. "));
-
-        // Todo: 겹치는 시간 있으면 오류 발생시키기
         Event event = request.toEvent(schedule);
         eventRepository.save(event);
         return IdResponse.of(event);
@@ -67,9 +78,12 @@ public class EventService {
     // TODO : event 수정 시 회의 도출 어케 할건지
     @Transactional
     public IdResponse modifyEvent(Long id, EventModifyDto request) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이벤트가 존재하지 않습니다. "));
+        Event event = getEvent(id);
+        Schedule schedule = getSchedule(request.getScheduleId());
 
+        if (eventRepository.existsByScheduleAndWeekAndTimeRange(schedule, request.getWeek(), request.getStart_time(), request.getEnd_time())) {
+            throw new RuntimeException("이벤트 시간이 겹칩니다.");
+        }
 
         event.update(request.getTitle(), request.getInfo(), request.getWeek(),
                 request.getStart_time(), request.getEnd_time());
@@ -79,8 +93,7 @@ public class EventService {
     // event 삭제
     @Transactional
     public void deleteEvent(Long id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이벤트를 찾을 수 없습니다. "));
+        Event event = getEvent(id);
         eventRepository.delete(event);
     }
 
