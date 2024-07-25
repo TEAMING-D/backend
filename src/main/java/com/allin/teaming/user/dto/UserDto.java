@@ -7,11 +7,11 @@ import com.allin.teaming.user.domain.User;
 import jakarta.validation.constraints.Email;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class UserDto {
     // 회원 가입
+    // TODO : 학교 이름으로 수정하기
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -30,7 +30,7 @@ public class UserDto {
         private String password;
 
         private String info;
-        private Long schoolID;
+        private Long schoolId;
 
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
@@ -50,6 +50,22 @@ public class UserDto {
         }
     }
 
+    @Builder
+    public static class UserSimpleDto {
+        private Long id;
+        private String username;
+        private Long schoolId;
+
+        public static UserSimpleDto of(User user) {
+            return UserSimpleDto.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .schoolId(user.getSchool().getId())
+                    .build();
+        }
+
+    }
+
     // 조회
     @Getter
     @NoArgsConstructor
@@ -61,7 +77,7 @@ public class UserDto {
         private String username;
 
         private String info;
-        private Long schoolID;
+        private Long schoolId;
         private String major;
 
         public static UserDetailDto of(User user) {
@@ -70,7 +86,7 @@ public class UserDto {
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .info(user.getInfo())
-                    .schoolID(user.getSchool().getId())
+                    .schoolId(user.getSchool().getId())
                     .major(user.getMajor())
                     .build();
         }
@@ -110,7 +126,7 @@ public class UserDto {
         private String username;
         private String phone;
         private String info;
-        private Long schoolID;
+        private Long schoolId;
         private String email;
         private String major;
 
@@ -120,7 +136,7 @@ public class UserDto {
             this.username = username;
             this.phone = phone;
             this.info = info;
-            this.schoolID = schoolID;
+            this.schoolId = schoolID;
             this.email = email;
             this.major = major;
         }

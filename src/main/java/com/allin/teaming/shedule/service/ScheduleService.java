@@ -1,7 +1,10 @@
 package com.allin.teaming.shedule.service;
 
+import com.allin.teaming.shedule.domain.Event;
 import com.allin.teaming.shedule.domain.Schedule;
+import com.allin.teaming.shedule.dto.EventDto;
 import com.allin.teaming.shedule.dto.ScheduleDto.*;
+import com.allin.teaming.shedule.repository.EventRepository;
 import com.allin.teaming.shedule.repository.ScheduleRepository;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.repository.UserRepository;
@@ -9,11 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     // id로 조회
     @Transactional(readOnly = true)
@@ -36,6 +42,8 @@ public class ScheduleService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
         Schedule schedule = request.toSchedule(user);
         scheduleRepository.save(schedule);
+        List<Event> events = request.getEvents().stream().map((eventDto) -> eventDto.toEvent(schedule)).toList();
+        events.forEach(eventRepository::save);
         return IdResponse.of(schedule);
     }
 

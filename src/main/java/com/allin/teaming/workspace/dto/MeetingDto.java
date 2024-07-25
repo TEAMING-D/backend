@@ -29,7 +29,7 @@ public class MeetingDto {
         private Week week;
         private LocalTime start_time;
         private LocalTime end_time;
-        List<UserScheduleDto> meetingParticipantsId = new ArrayList<>();
+        List<UserSimpleDto> users = new ArrayList<>();
 
         public static MeetingDetailDto of(Meeting meeting) {
             return MeetingDetailDto.builder()
@@ -40,8 +40,14 @@ public class MeetingDto {
                     .week(meeting.getWeek())
                     .start_time(meeting.getStart_time())
                     .end_time(meeting.getEnd_time())
+                    .users(meeting.getMeetingParticipants()
+                            .stream()
+                            .map(MeetingParticipant::getUser)
+                            .map(UserSimpleDto::of)
+                            .toList())
                     .build();
         }
+
     }
 
     @Getter
