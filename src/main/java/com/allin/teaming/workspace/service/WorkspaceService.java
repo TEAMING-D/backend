@@ -77,6 +77,7 @@ public class WorkspaceService {
         membershipRepository.save(membership);
     }
 
+
     // 워크스페이스에서 유저 제거
     public void removeUserFromWorkspace(Long workspaceId, Long userId) {
         Workspace workspace = findWorkspaceById(workspaceId);

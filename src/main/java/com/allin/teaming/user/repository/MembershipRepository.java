@@ -4,13 +4,14 @@ import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Workspace;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
+@Repository
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
+    boolean existsByWorkspaceIdAndUserId(Long workspaceId, Long userId);
     Optional<Membership> findByUserAndWorkspace(User user, Workspace workspace);
     List<Membership> findAllByUser(User user);
     void deleteById(Long id);
-
 }

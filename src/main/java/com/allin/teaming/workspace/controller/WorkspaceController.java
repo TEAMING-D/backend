@@ -53,7 +53,9 @@ public class WorkspaceController {
     }
 
     @PostMapping("/{workspaceId}/users/{userId}")
-    public ResponseEntity<Void> addUserToWorkspace(@PathVariable Long workspaceId, @PathVariable Long userId) {
+    public ResponseEntity<Void> addUserToWorkspace(
+            @PathVariable Long workspaceId,
+            @PathVariable Long userId) {
         workspaceService.addUserToWorkspace(workspaceId, userId);
         return ResponseEntity.noContent().build();
     }
