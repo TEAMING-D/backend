@@ -18,36 +18,53 @@ public class UserController {
 
     private final UserService userService;
 
-    // 조회
-    // id로 조회
+    // 회원 조회
     @GetMapping("/{user_id}")
-    public ResponseEntity<? extends BasicResponse> getUserById(
-            @PathVariable("user_id") Long id) {
-        return ResponseEntity.ok(
-                new DataResponse<>(userService.getUserInfoById(id)));
+    public ResponseEntity<? extends BasicResponse> getUserById(@PathVariable("user_id") Long userId) {
+        UserDetailDto user = userService.getUserInfoById(userId);
+        return ResponseEntity.ok().body(new DataResponse<>(user));
     }
 
-    // 전체 조회
+    // 이메일로 회원조회
+    @GetMapping("/email/{email}")
+    public ResponseEntity<? extends BasicResponse> getUserByEmail(@PathVariable("email") String email) {
+        UserDetailDto user = userService.getUserByEmail(email);
+        return ResponseEntity.ok().body(new DataResponse<>(user));
+    }
+
+    // 회원 전체 조회
     @GetMapping("/all")
-    public ResponseEntity<? extends BasicResponse> getAllUser() {
-        return ResponseEntity.ok(new DataResponse<List>(userService.getAllUserInfo()));
+    public ResponseEntity<? extends BasicResponse> getAllUserInfo() {
+        List<UserDetailDto> users = userService.getAllUserInfo();
+        return ResponseEntity.ok().body(new DataResponse<>(users));
     }
 
-    // 회원 정보 수정
-    @PatchMapping(value = "/{user_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends BasicResponse> modifyUser(
-            @PathVariable("user_id") Long user_id,
-            @RequestBody UserModifyRequest request) {
-        return ResponseEntity.ok(new DataResponse<>(userService.userModify(user_id, request)));
+    // 팀원 검색 (username 으로 회원 조회)
+    @GetMapping("/username/{username}")
+    public ResponseEntity<? extends BasicResponse> getUserByUsername(@PathVariable("username") String username) {
+        UserDetailDto user = userService.getUserByUsername(username);
+        return ResponseEntity.ok().body(new DataResponse<>(user));
     }
 
-    // 로그아웃
+    // 회원가입
+    @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends BasicResponse> signUp(@RequestBody UserRegistDto userRegistDto) {
+        IdResponse id = userService.signUp(userRegistDto);
+        return ResponseEntity.ok().body(new DataResponse<>(id));
+    }
 
-    // 회원 탈퇴
+    // 사용자 정보 입력(수정)
+    @PatchMapping("/{user_id}")
+    public ResponseEntity<? extends BasicResponse> modifyUser(@PathVariable("user_id") Long userId,
+                                                              @RequestBody UserModifyRequest request) {
+        IdResponse id = userService.userModify(userId, request);
+        return ResponseEntity.ok().body(new DataResponse<>(id));
+    }
+
+    // 탈퇴
     @DeleteMapping("/{user_id}")
-    public ResponseEntity<? extends BasicResponse> deleteUser(
-            @PathVariable("user_id") Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<? extends BasicResponse> deleteUser(@PathVariable("user_id") Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
     }
 }

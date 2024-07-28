@@ -1,9 +1,7 @@
 package com.allin.teaming.user.service;
 
-import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto.*;
-import com.allin.teaming.user.repository.SchoolRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // id로 회원 조회 (마이페이지)
@@ -54,18 +51,15 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
-
     // 사용자 정보 입력(수정)
     @Transactional
     public IdResponse userModify(Long id, UserModifyRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        // 학교 가져오기 -> 리스트에서 선택
-        School school = schoolRepository.findById(request.getSchoolId()).get();
-
-        user.update(request.getUsername(), request.getPhone(), request.getInfo(), school,
-                request.getEmail(), request.getMajor());
+        user.update(request.getUsername(), request.getPhone(), request.getSchoolId(), request.getSchoolName(),
+                request.getGitId(), request.getNotionMail(), request.getPlusMail(), request.getEmail(),
+                request.getMajor(), request.getBirth(), request.getSns());
         return IdResponse.of(user);
     }
 
@@ -80,31 +74,22 @@ public class UserService {
             throw new RuntimeException("이미 가입되어 있는 이메일입니다. ");
         }
 
-        School school = null;
-        if (request.getSchoolId() != null) {
-            school = schoolRepository.findById(request.getSchoolId()).get();
-        }
-        User user = request.toUser(school, bCryptPasswordEncoder.encode(request.getPassword()));
+        User user = request.toUser(bCryptPasswordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         return IdResponse.of(user);
     }
 
     // 탈퇴
-    // TODO: 회원 삭제 시 처리
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습ㄴ디ㅏ. "));
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
 
         // 업무 자동 삭제
-
         userRepository.delete(user);
     }
 
     // 로그인
 
     // 로그아웃
-
-
 }
-

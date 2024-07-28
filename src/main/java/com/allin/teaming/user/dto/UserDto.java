@@ -1,17 +1,13 @@
 package com.allin.teaming.user.dto;
 
 import com.allin.teaming.user.domain.RoleType;
-import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
-
 import jakarta.validation.constraints.Email;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 public class UserDto {
     // 회원 가입
-    // TODO : 학교 이름으로 수정하기
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -29,23 +25,46 @@ public class UserDto {
         @NotBlank
         private String password;
 
-        private String info;
         private Long schoolId;
+
+        @NotBlank
+        private String schoolName;
+
+        @NotBlank
+        private String gitId;
+
+        @NotBlank
+        private String notionMail;
+
+        @NotBlank
+        private String plusMail;
 
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
+
+        @NotBlank
         private String major;
 
-        public User toUser(School school, String password) {
+        @NotBlank
+        private String birth;
+
+        private String sns;
+
+        public User toUser(String password) {
             return User.builder()
                     .username(username)
                     .phone(phone)
                     .password(password)
                     .role(role)
-                    .info(info)
-                    .school(school)
+                    .schoolId(schoolId)
+                    .schoolName(schoolName)
+                    .gitId(gitId)
+                    .notionMail(notionMail)
+                    .plusMail(plusMail)
                     .email(email)
                     .major(major)
+                    .birth(birth)
+                    .sns(sns)
                     .build();
         }
     }
@@ -60,10 +79,9 @@ public class UserDto {
             return UserSimpleDto.builder()
                     .id(user.getId())
                     .username(user.getUsername())
-                    .schoolId(user.getSchool().getId())
+                    .schoolId(user.getSchoolId())
                     .build();
         }
-
     }
 
     // 조회
@@ -75,19 +93,20 @@ public class UserDto {
         private Long id;
         private String email;
         private String username;
-
-        private String info;
         private Long schoolId;
         private String major;
+        private String birth;
+        private String sns;
 
         public static UserDetailDto of(User user) {
             return UserDetailDto.builder()
                     .id(user.getId())
                     .email(user.getEmail())
                     .username(user.getUsername())
-                    .info(user.getInfo())
-                    .schoolId(user.getSchool().getId())
+                    .schoolId(user.getSchoolId())
                     .major(user.getMajor())
+                    .birth(user.getBirth())
+                    .sns(user.getSns())
                     .build();
         }
     }
@@ -113,7 +132,7 @@ public class UserDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class IdResponse{
+    public static class IdResponse {
         private Long id;
         public static IdResponse of(User user) {
             return new IdResponse(user.getId());
@@ -125,21 +144,31 @@ public class UserDto {
     public static class UserModifyRequest {
         private String username;
         private String phone;
-        private String info;
         private Long schoolId;
+        private String schoolName;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
         private String email;
         private String major;
+        private String birth;
+        private String sns;
 
         @Builder
-        public UserModifyRequest(String username, String phone, String info,
-                             Long schoolID, String email, String major) {
+        public UserModifyRequest(String username, String phone, Long schoolId, String schoolName,
+                                 String gitId, String notionMail, String plusMail, String email,
+                                 String major, String birth, String sns) {
             this.username = username;
             this.phone = phone;
-            this.info = info;
-            this.schoolId = schoolID;
+            this.schoolId = schoolId;
+            this.schoolName = schoolName;
+            this.gitId = gitId;
+            this.notionMail = notionMail;
+            this.plusMail = plusMail;
             this.email = email;
             this.major = major;
+            this.birth = birth;
+            this.sns = sns;
         }
     }
-
 }

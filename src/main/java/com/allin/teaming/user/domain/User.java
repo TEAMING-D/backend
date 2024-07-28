@@ -34,9 +34,26 @@ public class User {
 
     private String phone;
 
-    private String info;
+    @Column(name = "school_id")
+    private Long schoolId;
+
+    @Column(name = "school_name", nullable = false)
+    private String schoolName;
+
+    @Column(name = "git_id", nullable = false)
+    private String gitId;
+
+    @Column(name = "notion_mail", nullable = false)
+    private String notionMail;
+
+    @Column(name = "plus_mail", nullable = false)
+    private String plusMail;
 
     private String major;
+
+    private String birth;
+
+    private String sns;
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
@@ -57,19 +74,19 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<CollabTool> collabTools = new ArrayList<>();
 
-    // 학교
-    @ManyToOne
-    @JoinColumn(name = "school_id")
-    private School school;
-
-    public void update(String username, String phone, String info,
-                       School school, String email, String major) {
+    public void update(String username, String phone, Long schoolId, String schoolName,
+                       String gitId, String notionMail, String plusMail, String email,
+                       String major, String birth, String sns) {
         this.username = username;
         this.phone = phone;
-        this.info = info;
-        this.school = school;
+        this.schoolId = schoolId;
+        this.schoolName = schoolName;
+        this.gitId = gitId;
+        this.notionMail = notionMail;
+        this.plusMail = plusMail;
         this.email = email;
         this.major = major;
-
+        this.birth = birth;
+        this.sns = sns;
     }
 }
