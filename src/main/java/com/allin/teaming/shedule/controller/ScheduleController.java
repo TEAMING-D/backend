@@ -31,11 +31,11 @@ public class ScheduleController {
     }
 
     // schedule 생성
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<? extends BasicResponse> createSchedule(
-            @Valid @RequestBody ScheduleCreateDto request) {
-        return ResponseEntity.ok(new DataResponse<>(scheduleService.createSchedule(request)));
-    }
+//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<? extends BasicResponse> createSchedule(
+//            @Valid @RequestBody ScheduleCreateDto request) {
+//        return ResponseEntity.ok(new DataResponse<>(scheduleService.createSchedule(request)));
+//    }
 
     // schedule 수정
     @PatchMapping(value = "/{schedule_id}", consumes = MediaType.APPLICATION_JSON_VALUE)

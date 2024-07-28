@@ -46,12 +46,17 @@ public class ScheduleDto {
         @NotNull
         private Long userId;
 
-        public Schedule toSchedule(User user) {
+        public Schedule toEntity(User user) {
             return Schedule.builder()
                     .title(title)
                     .user(user)
                     .build();
         }
+    }
+
+    static public class ScheduleInitRequestDto {
+        private String url;
+
     }
 
     @Getter
