@@ -4,10 +4,11 @@ import com.allin.teaming.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity @Getter
+@Entity @Getter @Setter
 @NoArgsConstructor
 public class Work {
     @Id @Column(name = "work_id")
@@ -31,7 +32,9 @@ public class Work {
     private LocalDate due_date;
 
     @Enumerated(EnumType.STRING)
-    private WorkStatus workStatus;
+    private WorkStatus Status;
 
     private double progress;
+
+    private int weight=1;
 }
