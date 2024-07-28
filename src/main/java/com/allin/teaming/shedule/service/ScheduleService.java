@@ -35,17 +35,30 @@ public class ScheduleService {
                 .map(ScheduleDetailDto::of).orElseThrow(() -> new IllegalArgumentException("해당 스케줄을 찾을 수 없습니다. "));
     }
 
+    // 빈 스케줄 생성
+//    @Transactional
+//    IdResponse createSchedule(ScheduleCreateDto request) {
+//        User user = userRepository.findById(request.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다. "));
+//
+//        Schedule
+//    }
+
+    // everytime 링크 연결
+
+
+
     // schedule 생성
-    @Transactional
-    public IdResponse createSchedule(ScheduleCreateDto request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
-        Schedule schedule = request.toSchedule(user);
-        scheduleRepository.save(schedule);
-        List<Event> events = request.getEvents().stream().map((eventDto) -> eventDto.toEvent(schedule)).toList();
-        events.forEach(eventRepository::save);
-        return IdResponse.of(schedule);
-    }
+//    @Transactional
+//    public IdResponse initSchedule(ScheduleCreateDto request) {
+//        User user = userRepository.findById(request.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다. "));
+//        Schedule schedule = request.toSchedule(user);
+//        scheduleRepository.save(schedule);
+//        List<Event> events = request.getEvents().stream().map((eventDto) -> eventDto.toEvent(schedule)).toList();
+//        events.forEach(eventRepository::save);
+//        return IdResponse.of(schedule);
+//    }
 
     // schedule 수정
     @Transactional

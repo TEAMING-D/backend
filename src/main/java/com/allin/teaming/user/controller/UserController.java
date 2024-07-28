@@ -34,11 +34,10 @@ public class UserController {
     }
 
     // 회원 정보 수정
-    @PatchMapping(value = "/{user_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyUser(
-            @PathVariable("user_id") Long user_id,
             @RequestBody UserModifyRequest request) {
-        return ResponseEntity.ok(new DataResponse<>(userService.userModify(user_id, request)));
+        return ResponseEntity.ok(new DataResponse<>(userService.userModify(request)));
     }
 
     // 로그아웃

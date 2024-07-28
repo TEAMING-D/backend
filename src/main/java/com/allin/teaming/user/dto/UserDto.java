@@ -123,23 +123,11 @@ public class UserDto {
     // 사용자 정보 수정
     @Getter
     public static class UserModifyRequest {
+        private Long userId;
         private String username;
-        private String phone;
         private String info;
         private Long schoolId;
-        private String email;
         private String major;
-
-        @Builder
-        public UserModifyRequest(String username, String phone, String info,
-                             Long schoolID, String email, String major) {
-            this.username = username;
-            this.phone = phone;
-            this.info = info;
-            this.schoolId = schoolID;
-            this.email = email;
-            this.major = major;
-        }
     }
 
 }

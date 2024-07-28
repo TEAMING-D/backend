@@ -57,15 +57,14 @@ public class UserService {
 
     // 사용자 정보 입력(수정)
     @Transactional
-    public IdResponse userModify(Long id, UserModifyRequest request) {
-        User user = userRepository.findById(id)
+    public IdResponse userModify(UserModifyRequest request) {
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
         // 학교 가져오기 -> 리스트에서 선택
         School school = schoolRepository.findById(request.getSchoolId()).get();
 
-        user.update(request.getUsername(), request.getPhone(), request.getInfo(), school,
-                request.getEmail(), request.getMajor());
+        user.update(request.getUsername(), request.getInfo(), school, request.getMajor());
         return IdResponse.of(user);
     }
 
