@@ -27,4 +27,6 @@ public class Assignment {
     @ManyToOne
     @JoinColumn(name = "membership_id")
     private Membership membership;
+
+    private int score;
 }

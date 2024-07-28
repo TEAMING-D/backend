@@ -35,4 +35,6 @@ public class Work {
     private WorkStatus Status;
 
     private double progress;
+
+    private int weight=1;
 }

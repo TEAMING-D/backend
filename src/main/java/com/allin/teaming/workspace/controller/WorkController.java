@@ -6,18 +6,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/workspaces/{workspaceId}/works")
 @RequiredArgsConstructor
 public class WorkController {
-
     private final WorkService workService;
 
     @PostMapping
     public ResponseEntity<WorkDTO> createWork(
             @PathVariable Long workspaceId,
             @RequestBody WorkDTO workDTO) {
-        System.out.println("Received WorkDTO: " + workDTO);
         WorkDTO createdWork = workService.createWork(workspaceId, workDTO);
         return ResponseEntity.ok(createdWork);
     }
@@ -37,5 +37,19 @@ public class WorkController {
             @PathVariable Long id) {
         workService.deleteWork(workspaceId, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<WorkDTO>> getAllWorks(@PathVariable Long workspaceId) {
+        List<WorkDTO> works = workService.getAllWorks(workspaceId);
+        return ResponseEntity.ok(works);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WorkDTO> getWorkById(
+            @PathVariable Long workspaceId,
+            @PathVariable Long id) {
+        WorkDTO work = workService.getWorkById(id);
+        return ResponseEntity.ok(work);
     }
 }

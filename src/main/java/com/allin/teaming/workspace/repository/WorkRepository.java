@@ -15,3 +15,4 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     // 특정 워크스페이스의 업무 조회 (업무 ID 기준)
     Optional<Work> findByIdAndWorkspaceId(Long id, Long workspaceId);
 }
+

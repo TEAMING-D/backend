@@ -13,7 +13,6 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-    // 업무에 사용자 추가
     @PostMapping
     public ResponseEntity<AssignmentDTO> addUserToWork(
             @RequestParam Long workId,
@@ -22,12 +21,20 @@ public class AssignmentController {
         return ResponseEntity.ok(assignmentDTO);
     }
 
-    // 업무 사용자 삭제
     @DeleteMapping
     public ResponseEntity<Void> removeUserFromWork(
             @RequestParam Long workId,
             @RequestParam Long membershipId) {
         assignmentService.removeUserFromWork(workId, membershipId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/score")
+    public ResponseEntity<AssignmentDTO> updateScore(
+            @RequestParam Long workId,
+            @RequestParam Long membershipId,
+            @RequestParam int score) {
+        AssignmentDTO updatedAssignment = assignmentService.updateScore(workId, membershipId, score);
+        return ResponseEntity.ok(updatedAssignment);
     }
 }

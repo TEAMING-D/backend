@@ -10,5 +10,5 @@ public class AssignmentDTO {
     private Long id;
     private Long workId;
     private Long membershipId;
-    private String score;
+    private int score;
 }

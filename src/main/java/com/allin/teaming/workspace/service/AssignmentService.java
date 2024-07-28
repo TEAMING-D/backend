@@ -56,12 +56,33 @@ public class AssignmentService {
         assignmentRepository.delete(assignment);
     }
 
+    // 참여도(score) 업데이트
+    @Transactional
+    public AssignmentDTO updateScore(Long workId, Long membershipId, int score) {
+        if (score < 1 || score > 9) {
+            throw new IllegalArgumentException("Score must be between 1 and 9");
+        }
+
+        Work work = workRepository.findById(workId)
+                .orElseThrow(() -> new IllegalArgumentException("Work not found with id: " + workId));
+        Membership membership = membershipRepository.findById(membershipId)
+                .orElseThrow(() -> new IllegalArgumentException("Membership not found with id: " + membershipId));
+
+        Assignment assignment = assignmentRepository.findByWorkAndMembership(work, membership)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found for workId: " + workId + " and membershipId: " + membershipId));
+
+        assignment.setScore(score);
+        Assignment updatedAssignment = assignmentRepository.save(assignment);
+        return convertToDTO(updatedAssignment);
+    }
+
     // DTO로 변환
     private AssignmentDTO convertToDTO(Assignment assignment) {
         AssignmentDTO dto = new AssignmentDTO();
         dto.setId(assignment.getId());
         dto.setWorkId(assignment.getWork().getId());
         dto.setMembershipId(assignment.getMembership().getId());
+        dto.setScore(assignment.getScore());
         return dto;
     }
 }

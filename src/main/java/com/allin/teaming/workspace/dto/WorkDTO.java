@@ -19,9 +19,9 @@ public class WorkDTO {
     private LocalDate dueDate;
     private WorkStatus Status;
     private double progress;
+    private int weight=1;
     private List<Long> assignedUserIds;
 
-    // 기본 생성자와 필드를 초기화하는 생성자
     public WorkDTO() {}
 
     public WorkDTO(Work work) {
@@ -32,5 +32,6 @@ public class WorkDTO {
         this.dueDate = work.getDue_date();
         this.Status = work.getStatus();
         this.progress = work.getProgress();
+        this.weight = work.getWeight();
     }
 }
