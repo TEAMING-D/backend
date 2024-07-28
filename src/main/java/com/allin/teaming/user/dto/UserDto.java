@@ -27,18 +27,6 @@ public class UserDto {
 
         private Long schoolId;
 
-        @NotBlank
-        private String schoolName;
-
-        @NotBlank
-        private String gitId;
-
-        @NotBlank
-        private String notionMail;
-
-        @NotBlank
-        private String plusMail;
-
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
 
@@ -50,6 +38,12 @@ public class UserDto {
 
         private String sns;
 
+        private String schoolName;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
+        private String collabTools; // 추가된 필드
+
         public User toUser(String password) {
             return User.builder()
                     .username(username)
@@ -57,17 +51,19 @@ public class UserDto {
                     .password(password)
                     .role(role)
                     .schoolId(schoolId)
-                    .schoolName(schoolName)
-                    .gitId(gitId)
-                    .notionMail(notionMail)
-                    .plusMail(plusMail)
                     .email(email)
                     .major(major)
                     .birth(birth)
                     .sns(sns)
+                    .schoolName(schoolName)
+                    .gitId(gitId)
+                    .notionMail(notionMail)
+                    .plusMail(plusMail)
+                    .collabTools(collabTools)  // 추가된 필드
                     .build();
         }
     }
+
 
     @Builder
     public static class UserSimpleDto {
@@ -97,6 +93,7 @@ public class UserDto {
         private String major;
         private String birth;
         private String sns;
+        private String collabTools; // 추가된 필드
 
         public static UserDetailDto of(User user) {
             return UserDetailDto.builder()
@@ -107,6 +104,7 @@ public class UserDto {
                     .major(user.getMajor())
                     .birth(user.getBirth())
                     .sns(user.getSns())
+                    .collabTools(user.getCollabTools())
                     .build();
         }
     }
@@ -153,22 +151,22 @@ public class UserDto {
         private String major;
         private String birth;
         private String sns;
+        private String collabTools;
 
         @Builder
-        public UserModifyRequest(String username, String phone, Long schoolId, String schoolName,
-                                 String gitId, String notionMail, String plusMail, String email,
-                                 String major, String birth, String sns) {
+        public UserModifyRequest(String username, String phone, Long schoolId, String schoolName, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
             this.username = username;
             this.phone = phone;
             this.schoolId = schoolId;
-            this.schoolName = schoolName;
-            this.gitId = gitId;
-            this.notionMail = notionMail;
-            this.plusMail = plusMail;
             this.email = email;
             this.major = major;
             this.birth = birth;
             this.sns = sns;
+            this.schoolName = schoolName;
+            this.gitId = gitId;
+            this.notionMail = notionMail;
+            this.plusMail = plusMail;
+            this.collabTools = collabTools;
         }
     }
 }

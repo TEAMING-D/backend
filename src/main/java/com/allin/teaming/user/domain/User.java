@@ -37,17 +37,20 @@ public class User {
     @Column(name = "school_id")
     private Long schoolId;
 
-    @Column(name = "school_name", nullable = false)
+    @Column(name = "school_name")
     private String schoolName;
 
-    @Column(name = "git_id", nullable = false)
+    @Column(name = "git_id")
     private String gitId;
 
-    @Column(name = "notion_mail", nullable = false)
+    @Column(name = "notion_mail")
     private String notionMail;
 
-    @Column(name = "plus_mail", nullable = false)
+    @Column(name = "plus_mail")
     private String plusMail;
+
+    @Column(columnDefinition = "TEXT")
+    private String collabTools; // JSON 형식으로 저장
 
     private String major;
 
@@ -70,13 +73,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Work> works = new ArrayList<>();
 
-    // 협업 계정 리스트
-    @OneToMany(mappedBy = "user")
-    private List<CollabTool> collabTools = new ArrayList<>();
-
-    public void update(String username, String phone, Long schoolId, String schoolName,
-                       String gitId, String notionMail, String plusMail, String email,
-                       String major, String birth, String sns) {
+    public void update(String username, String phone, Long schoolId, String schoolName, String gitId, String notionMail, String plusMail, String collabTools, String email, String major, String birth, String sns) {
         this.username = username;
         this.phone = phone;
         this.schoolId = schoolId;
@@ -84,6 +81,7 @@ public class User {
         this.gitId = gitId;
         this.notionMail = notionMail;
         this.plusMail = plusMail;
+        this.collabTools = collabTools;
         this.email = email;
         this.major = major;
         this.birth = birth;

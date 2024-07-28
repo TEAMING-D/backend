@@ -58,7 +58,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
         user.update(request.getUsername(), request.getPhone(), request.getSchoolId(), request.getSchoolName(),
-                request.getGitId(), request.getNotionMail(), request.getPlusMail(), request.getEmail(),
+                request.getGitId(), request.getNotionMail(), request.getPlusMail(), request.getCollabTools(), request.getEmail(),
                 request.getMajor(), request.getBirth(), request.getSns());
         return IdResponse.of(user);
     }
@@ -84,12 +84,7 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
-
-        // 업무 자동 삭제
+        //자동 삭제
         userRepository.delete(user);
     }
-
-    // 로그인
-
-    // 로그아웃
 }
