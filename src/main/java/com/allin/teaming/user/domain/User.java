@@ -44,6 +44,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Schedule schedule;
 
+
     @OneToMany(mappedBy = "user")
     private List<Membership> memberships = new ArrayList<>();
 
@@ -62,12 +63,18 @@ public class User {
     @JoinColumn(name = "school_id")
     private School school;
 
+    private String schoolNum;
+
     public void update(String username, String info,
-                       School school, String major) {
+                       String major, String schoolNum) {
         this.username = username;
         this.info = info;
-        this.school = school;
         this.major = major;
+        this.schoolNum = schoolNum;
 
+    }
+
+    public void updateSchool(School school) {
+        this.school = school;
     }
 }

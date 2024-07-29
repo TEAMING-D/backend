@@ -27,10 +27,32 @@ public class UserController {
                 new DataResponse<>(userService.getUserInfoById(id)));
     }
 
+    // 이메일로 조회
+    @GetMapping("/email/{email}")
+    public ResponseEntity<? extends BasicResponse> getUserByEmail(
+            @PathVariable("email") String email) {
+        return ResponseEntity.ok(new DataResponse<>(userService.getUserByEmail(email)));
+    }
+
+    // 이름으로 조회
+    @GetMapping("/username/{username}")
+    public ResponseEntity<? extends BasicResponse> getUserByUsername(
+            @PathVariable("username") String username) {
+        return ResponseEntity.ok(new DataResponse<>(userService.getUserByUsername(username)));
+    }
+
+    // 학번으로 조회
+    @GetMapping("/schoolNum/{schoolNum}")
+    public ResponseEntity<? extends BasicResponse> getUserBySchoolNum(
+            @PathVariable("schoolNum") String schoolNum) {
+        return ResponseEntity.ok(new DataResponse<>(userService.getUserBySchoolNum(schoolNum)));
+    }
+
+
     // 전체 조회
     @GetMapping("/all")
     public ResponseEntity<? extends BasicResponse> getAllUser() {
-        return ResponseEntity.ok(new DataResponse<List>(userService.getAllUserInfo()));
+        return ResponseEntity.ok(new DataResponse<>(userService.getAllUserInfo()));
     }
 
     // 회원 정보 수정

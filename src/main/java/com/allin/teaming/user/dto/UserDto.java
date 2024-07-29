@@ -11,7 +11,6 @@ import lombok.*;
 
 public class UserDto {
     // 회원 가입
-    // TODO : 학교 이름으로 수정하기
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -30,7 +29,8 @@ public class UserDto {
         private String password;
 
         private String info;
-        private Long schoolId;
+        private String schoolName;
+        private String schoolNum;
 
         @Email(message = "잘못된 이메일 형식입니다. ")
         private String email;
@@ -44,23 +44,28 @@ public class UserDto {
                     .role(role)
                     .info(info)
                     .school(school)
+                    .schoolNum(schoolNum)
                     .email(email)
                     .major(major)
                     .build();
         }
     }
 
+
+
     @Builder
     public static class UserSimpleDto {
-        private Long id;
+        private Long userId;
         private String username;
-        private Long schoolId;
+        private String schoolName;
+        private String schoolNum;
 
         public static UserSimpleDto of(User user) {
             return UserSimpleDto.builder()
-                    .id(user.getId())
+                    .userId(user.getId())
                     .username(user.getUsername())
-                    .schoolId(user.getSchool().getId())
+                    .schoolName(user.getSchool().getName())
+                    .schoolNum(user.getSchoolNum())
                     .build();
         }
 
@@ -72,21 +77,23 @@ public class UserDto {
     @AllArgsConstructor
     @Builder
     public static class UserDetailDto {
-        private Long id;
+        private Long userId;
         private String email;
         private String username;
 
         private String info;
-        private Long schoolId;
+        private String schoolName;
+        private String schoolNum;
         private String major;
 
         public static UserDetailDto of(User user) {
             return UserDetailDto.builder()
-                    .id(user.getId())
+                    .userId(user.getId())
                     .email(user.getEmail())
                     .username(user.getUsername())
                     .info(user.getInfo())
-                    .schoolId(user.getSchool().getId())
+                    .schoolName(user.getSchool().getName())
+                    .schoolNum(user.getSchoolNum())
                     .major(user.getMajor())
                     .build();
         }
@@ -122,11 +129,12 @@ public class UserDto {
 
     // 사용자 정보 수정
     @Getter
-    public static class UserModifyRequest {
+    public static class  UserModifyRequest {
         private Long userId;
         private String username;
         private String info;
-        private Long schoolId;
+        private String schoolName;
+        private String schoolNum;
         private String major;
     }
 
