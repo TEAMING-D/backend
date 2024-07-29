@@ -85,7 +85,7 @@ public class UserDto {
     @AllArgsConstructor
     @Builder
     public static class UserDetailDto {
-        private Long id;
+        private Long userId;
         private String email;
         private String username;
 
@@ -140,7 +140,7 @@ public class UserDto {
 
     // 사용자 정보 수정
     @Getter
-    public static class  UserModifyRequest {
+    public static class UserModifyRequest {
         private Long userId;
         private String username;
         private String info;
@@ -156,22 +156,6 @@ public class UserDto {
         private String birth;
         private String sns;
         private String collabTools;
-
-        @Builder
-        public UserModifyRequest(String username, String phone, Long schoolId, String schoolName, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
-            this.username = username;
-            this.phone = phone;
-            this.schoolId = schoolId;
-            this.email = email;
-            this.major = major;
-            this.birth = birth;
-            this.sns = sns;
-            this.schoolName = schoolName;
-            this.gitId = gitId;
-            this.notionMail = notionMail;
-            this.plusMail = plusMail;
-            this.collabTools = collabTools;
-        }
     }
 
 }

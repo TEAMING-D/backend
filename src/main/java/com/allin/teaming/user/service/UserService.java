@@ -75,15 +75,29 @@ public class UserService {
                     .orElseThrow(() -> new IllegalArgumentException("해당 학교가 존재하지 않습니다."));
             user.updateSchool(school);
         }
-        //user.update(request.getUsername(), request.getInfo(), request.getMajor(), request.getSchoolNum());
 
-        user.update(request.getUsername(), request.getPhone(), request.getSchoolId(), request.getSchoolName(),
-                request.getGitId(), request.getNotionMail(), request.getPlusMail(), request.getCollabTools(), request.getEmail(),
-                request.getMajor(), request.getBirth(), request.getSns());
+        user.update(
+                request.getUsername(),
+                request.getPhone(),
+                request.getSchoolName(),
+                request.getGitId(),
+                request.getNotionMail(),
+                request.getPlusMail(),
+                request.getCollabTools(),
+                request.getEmail(),
+                request.getMajor(),
+                request.getBirth(),
+                request.getSns(),
+                request.getInfo(),
+                request.getSchoolNum()
+        );
         return IdResponse.of(user);
     }
 
-    // 회원가입
+ //   UserModifyRequest(Long userId, String username, String info, String schoolName, String schoolNum, String phone, Long schoolId, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
+
+
+        // 회원가입
     @Transactional
     public IdResponse signUp(UserRegistDto request) {
         if (userRepository.existsByPhone(request.getPhone())) {

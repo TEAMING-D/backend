@@ -34,9 +34,6 @@ public class User {
 
     private String phone;
 
-    @Column(name = "school_id")
-    private Long schoolId;
-
     @Column(name = "school_name")
     private String schoolName;
 
@@ -73,10 +70,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Work> works = new ArrayList<>();
 
-//    // 협업 계정 리스트
-//    @OneToMany(mappedBy = "user")
-//    private List<CollabTool> collabTools = new ArrayList<>();
-
     // 학교
     @ManyToOne
     @JoinColumn(name = "school_id")
@@ -84,12 +77,11 @@ public class User {
 
     private String schoolNum;
 
-    public void update(String username, String phone, Long schoolId, String schoolName, String gitId,
+    public void update(String username, String phone,String schoolName, String gitId,
                        String notionMail, String plusMail, String collabTools, String email,
                        String major, String birth, String sns, String info, String schoolNum) {
         this.username = username;
         this.phone = phone;
-        this.schoolId = schoolId;
         this.schoolName = schoolName;
         this.gitId = gitId;
         this.notionMail = notionMail;
@@ -102,7 +94,6 @@ public class User {
         this.info = info;
         this.schoolNum = schoolNum;
     }
-
 
     public void updateSchool(School school) {
         this.school = school;
