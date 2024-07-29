@@ -75,8 +75,11 @@ public class UserService {
                     .orElseThrow(() -> new IllegalArgumentException("해당 학교가 존재하지 않습니다."));
             user.updateSchool(school);
         }
-        user.update(request.getUsername(), request.getInfo(), request.getMajor(), request.getSchoolNum());
+        //user.update(request.getUsername(), request.getInfo(), request.getMajor(), request.getSchoolNum());
 
+        user.update(request.getUsername(), request.getPhone(), request.getSchoolId(), request.getSchoolName(),
+                request.getGitId(), request.getNotionMail(), request.getPlusMail(), request.getCollabTools(), request.getEmail(),
+                request.getMajor(), request.getBirth(), request.getSns());
         return IdResponse.of(user);
     }
 

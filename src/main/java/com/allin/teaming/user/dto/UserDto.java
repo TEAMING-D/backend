@@ -11,6 +11,7 @@ import lombok.*;
 
 public class UserDto {
     // 회원 가입
+    // TODO : 학교 이름으로 수정하기
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -36,6 +37,15 @@ public class UserDto {
         private String email;
         private String major;
 
+        @NotBlank
+        private String birth;
+
+        private String sns;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
+        private String collabTools; // 추가된 필드
+
         public User toUser(School school, String password) {
             return User.builder()
                     .username(username)
@@ -50,8 +60,6 @@ public class UserDto {
                     .build();
         }
     }
-
-
 
     @Builder
     public static class UserSimpleDto {
@@ -77,7 +85,7 @@ public class UserDto {
     @AllArgsConstructor
     @Builder
     public static class UserDetailDto {
-        private Long userId;
+        private Long id;
         private String email;
         private String username;
 
@@ -85,6 +93,9 @@ public class UserDto {
         private String schoolName;
         private String schoolNum;
         private String major;
+        private String birth;
+        private String sns;
+        private String collabTools;
 
         public static UserDetailDto of(User user) {
             return UserDetailDto.builder()
@@ -135,7 +146,32 @@ public class UserDto {
         private String info;
         private String schoolName;
         private String schoolNum;
+        private String phone;
+        private Long schoolId;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
+        private String email;
         private String major;
+        private String birth;
+        private String sns;
+        private String collabTools;
+
+        @Builder
+        public UserModifyRequest(String username, String phone, Long schoolId, String schoolName, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
+            this.username = username;
+            this.phone = phone;
+            this.schoolId = schoolId;
+            this.email = email;
+            this.major = major;
+            this.birth = birth;
+            this.sns = sns;
+            this.schoolName = schoolName;
+            this.gitId = gitId;
+            this.notionMail = notionMail;
+            this.plusMail = plusMail;
+            this.collabTools = collabTools;
+        }
     }
 
 }

@@ -52,7 +52,7 @@ public class UserController {
     // 전체 조회
     @GetMapping("/all")
     public ResponseEntity<? extends BasicResponse> getAllUser() {
-        return ResponseEntity.ok(new DataResponse<>(userService.getAllUserInfo()));
+        return ResponseEntity.ok(new DataResponse<List>(userService.getAllUserInfo()));
     }
 
     // 회원 정보 수정

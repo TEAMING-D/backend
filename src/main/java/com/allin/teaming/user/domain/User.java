@@ -34,16 +34,35 @@ public class User {
 
     private String phone;
 
-    private String info;
+    @Column(name = "school_id")
+    private Long schoolId;
+
+    @Column(name = "school_name")
+    private String schoolName;
+
+    @Column(name = "git_id")
+    private String gitId;
+
+    @Column(name = "notion_mail")
+    private String notionMail;
+
+    @Column(name = "plus_mail")
+    private String plusMail;
+
+    @Column(columnDefinition = "TEXT")
+    private String collabTools; // JSON 형식으로 저장
 
     private String major;
+    private String birth;
+    private String sns;
+
+    private String info;
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
     @OneToOne(mappedBy = "user")
     private Schedule schedule;
-
 
     @OneToMany(mappedBy = "user")
     private List<Membership> memberships = new ArrayList<>();
@@ -54,9 +73,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Work> works = new ArrayList<>();
 
-    // 협업 계정 리스트
-    @OneToMany(mappedBy = "user")
-    private List<CollabTool> collabTools = new ArrayList<>();
+//    // 협업 계정 리스트
+//    @OneToMany(mappedBy = "user")
+//    private List<CollabTool> collabTools = new ArrayList<>();
 
     // 학교
     @ManyToOne
@@ -65,14 +84,25 @@ public class User {
 
     private String schoolNum;
 
-    public void update(String username, String info,
-                       String major, String schoolNum) {
+    public void update(String username, String phone, Long schoolId, String schoolName, String gitId,
+                       String notionMail, String plusMail, String collabTools, String email,
+                       String major, String birth, String sns, String info, String schoolNum) {
         this.username = username;
-        this.info = info;
+        this.phone = phone;
+        this.schoolId = schoolId;
+        this.schoolName = schoolName;
+        this.gitId = gitId;
+        this.notionMail = notionMail;
+        this.plusMail = plusMail;
+        this.collabTools = collabTools;
+        this.email = email;
         this.major = major;
+        this.birth = birth;
+        this.sns = sns;
+        this.info = info;
         this.schoolNum = schoolNum;
-
     }
+
 
     public void updateSchool(School school) {
         this.school = school;
