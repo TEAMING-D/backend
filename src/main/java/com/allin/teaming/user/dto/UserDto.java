@@ -11,6 +11,7 @@ import lombok.*;
 
 public class UserDto {
     // 회원 가입
+    // TODO : 학교 이름으로 수정하기
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -36,6 +37,15 @@ public class UserDto {
         private String email;
         private String major;
 
+        @NotBlank
+        private String birth;
+
+        private String sns;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
+        private String collabTools; // 추가된 필드
+
         public User toUser(School school, String password) {
             return User.builder()
                     .username(username)
@@ -50,8 +60,6 @@ public class UserDto {
                     .build();
         }
     }
-
-
 
     @Builder
     public static class UserSimpleDto {
@@ -85,6 +93,9 @@ public class UserDto {
         private String schoolName;
         private String schoolNum;
         private String major;
+        private String birth;
+        private String sns;
+        private String collabTools;
 
         public static UserDetailDto of(User user) {
             return UserDetailDto.builder()
@@ -129,13 +140,22 @@ public class UserDto {
 
     // 사용자 정보 수정
     @Getter
-    public static class  UserModifyRequest {
+    public static class UserModifyRequest {
         private Long userId;
         private String username;
         private String info;
         private String schoolName;
         private String schoolNum;
+        private String phone;
+        private Long schoolId;
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
+        private String email;
         private String major;
+        private String birth;
+        private String sns;
+        private String collabTools;
     }
 
 }
