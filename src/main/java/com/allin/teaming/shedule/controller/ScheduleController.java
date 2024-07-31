@@ -24,7 +24,7 @@ public class ScheduleController {
     }
 
     // userId로 조회
-    @GetMapping("/user/{user_id}")
+    @GetMapping("/user")
     public ResponseEntity<? extends BasicResponse> getScheduleByUserId(
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUser(token)));
