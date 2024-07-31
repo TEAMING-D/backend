@@ -43,8 +43,8 @@ public class WorkspaceController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<WorkspaceDTO> getAllWorkspacesByUserId(@PathVariable Long userId) {
-        return workspaceService.getAllWorkspacesByUserId(userId);
+    public List<WorkspaceDTO> getAllWorkspacesByUserId(@RequestHeader("Authorization") String token) {
+        return workspaceService.getAllWorkspacesByUserId(token);
     }
 
     @GetMapping("/{workspaceId}/members")
