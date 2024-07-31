@@ -39,7 +39,7 @@ public class ScheduleController {
     }
 
     // schedule 수정
-    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifySchedule(
             @RequestBody ScheduleModifyDto request) {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(request)));

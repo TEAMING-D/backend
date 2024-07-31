@@ -51,7 +51,7 @@ public class EventController {
     }
 
     // event 수정
-    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyEvent(
             @RequestBody EventModifyDto request) {
         return ResponseEntity.ok(new DataResponse<>(eventService.modifyEvent(request)));
