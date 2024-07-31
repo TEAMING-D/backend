@@ -64,11 +64,12 @@ public class EventService {
     // event 생성
     @Transactional
     public IdResponse createEvent(String token, EventRegistDto request) {
-        if (eventRepository.existsByTitle(request.getTitle())) {
-            throw new RuntimeException("이미 존재하는 이벤트 입니다.");
-        }
 
         Schedule schedule = findUserByToken(token).getSchedule();
+
+        if (eventRepository.existsByScheduleAndTitle(schedule, request.getTitle())) {
+            throw new RuntimeException("이미 존재하는 이벤트 입니다.");
+        }
 
         // 겹치는 시간 확인
         if (eventRepository.existsByScheduleAndWeekAndTimeRange(schedule, request.getWeek(), request.getStart_time(), request.getEnd_time())) {
@@ -91,10 +92,10 @@ public class EventService {
         Schedule schedule = event.getSchedule();
 
         if (event.getSchedule() != user.getSchedule()) {
-            throw new IllegalArgumentException("해당 일정을 삭제할 권한이 없습니다. ");
+            throw new IllegalArgumentException("해당 일정을 수정할 권한이 없습니다. ");
         }
 
-        if (eventRepository.existsByTitle(request.getTitle())) {
+        if (eventRepository.existsByScheduleAndTitle(schedule, request.getTitle())) {
             throw new IllegalArgumentException("해당 이름을 가진 일정이 존재합니다. ");
         }
 
