@@ -36,10 +36,17 @@ public class ScheduleService {
         return ScheduleDetailDto.of(findScheduleById(id));
     }
 
-    // userId로 조회
+    // 내 시간표 조회
     @Transactional(readOnly = true)
     public ScheduleDetailDto getScheduleByUser(String token) {
         return ScheduleDetailDto.of(findUserByToken(token).getSchedule());
+    }
+
+    @Transactional(readOnly = true)
+    public ScheduleDetailDto getScheduleByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
+        return ScheduleDetailDto.of(user.getSchedule());
     }
 
     // 초기 스케줄 생성
