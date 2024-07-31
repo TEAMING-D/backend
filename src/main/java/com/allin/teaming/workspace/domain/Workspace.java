@@ -19,17 +19,13 @@ public class Workspace {
     @Id
     @Column(name = "workspace_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userid;
+    private Long id;
     private String name;
     private String description;
 
-    public Long getId() {
-        return userid;
-    }
-
-    public void setId(Long id) {
-        this.userid = id;
-    }
+    // 새로운 필드 추가
+    private String type; // 예: 수업, 대회, 동아리, 기타
+    private LocalDate deadline; // 마감 기한
 
     @OneToMany(mappedBy = "workspace")
     private List<Membership> memberships = new ArrayList<>();

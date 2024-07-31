@@ -1,6 +1,10 @@
 package com.allin.teaming.workspace.dto;
+
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 public class WorkspaceDTO {
@@ -8,40 +12,21 @@ public class WorkspaceDTO {
     private Long id;
     private String name;
     private String description;
+    private String type; // 워크스페이스 유형 (수업, 대회, 동아리, 기타 등)
+    private LocalDate deadline; // 마감 기한
+    private List<Long> initialMembers; // 초기 팀원 ID 리스트
 
     // 기본 생성자
     public WorkspaceDTO() {
     }
 
     // 필드를 초기화하는 생성자
-    public WorkspaceDTO(Long id, String name, String description) {
+    public WorkspaceDTO(Long id, String name, String description, String type, LocalDate deadline, List<Long> initialMembers) {
         this.id = id;
         this.name = name;
         this.description = description;
-    }
-
-    // Getter 및 Setter 메서드
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        this.type = type;
+        this.deadline = deadline;
+        this.initialMembers = initialMembers;
     }
 }
