@@ -72,7 +72,6 @@ public class EventDto {
     @Getter
     public static class EventModifyDto {
         private Long eventId;
-        private Long scheduleId;
         private String title;
         private String info;
         private Week week;
