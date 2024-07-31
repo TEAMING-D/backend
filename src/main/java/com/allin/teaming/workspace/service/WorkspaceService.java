@@ -60,17 +60,16 @@ public class WorkspaceService {
     public WorkspaceDTO createWorkspace(String token, WorkspaceDTO workspaceDTO) {
         User user = findUserByToken(token);
         Workspace workspace = convertToEntity(workspaceDTO);
-
-        List<Long> users = workspaceDTO.getMembers();
-        users.add(user.getId());
-
         workspace.setCreated_date(LocalDate.now());
 
         Workspace savedWorkspace = workspaceRepository.save(workspace);
 
+        List<Long> users = workspaceDTO.getMembers();
+        users.add(user.getId());
+        System.out.println("<<<<<<" + users + ">>>>>>>");
+
         // 팀원 추가
         addInitialMembers(savedWorkspace, users); // 초기 팀원 추가 메서드
-
 
         return convertToDTO(savedWorkspace);
     }
