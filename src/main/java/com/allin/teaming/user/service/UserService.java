@@ -99,12 +99,13 @@ public class UserService {
                 request.getBirth(),
                 request.getSns(),
                 request.getInfo(),
-                request.getSchoolNum()
+                request.getSchoolNum() // Ensure schoolNum is set correctly
         );
         return IdResponse.of(user);
     }
 
- //   UserModifyRequest(Long userId, String username, String info, String schoolName, String schoolNum, String phone, Long schoolId, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
+
+    //   UserModifyRequest(Long userId, String username, String info, String schoolName, String schoolNum, String phone, Long schoolId, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
 
 
         // 회원가입

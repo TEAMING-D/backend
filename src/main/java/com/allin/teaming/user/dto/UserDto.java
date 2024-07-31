@@ -57,8 +57,15 @@ public class UserDto {
                     .schoolNum(schoolNum)
                     .email(email)
                     .major(major)
+                    .birth(birth)
+                    .sns(sns)
+                    .gitId(gitId)
+                    .notionMail(notionMail)
+                    .plusMail(plusMail)
+                    .collabTools(collabTools)
                     .build();
         }
+
     }
 
     @Builder
