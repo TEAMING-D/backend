@@ -42,8 +42,6 @@ public class EventDto {
 
     @Getter
     static public class EventRegistDto {
-        @NotNull
-        private Long userId;
 
         private String title;
         private String info;
@@ -73,6 +71,7 @@ public class EventDto {
 
     @Getter
     public static class EventModifyDto {
+        private Long eventId;
         private Long scheduleId;
         private String title;
         private String info;

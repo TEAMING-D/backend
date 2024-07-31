@@ -21,40 +21,40 @@ public class EventController {
     // event id로 조회
     @GetMapping("/{event_id}")
     public ResponseEntity<? extends BasicResponse> getEventByID(
-            @PathVariable("event_id") Long id) {
+            @PathVariable("event_id") Long eventId) {
         return ResponseEntity.ok(
-                new DataResponse<>(eventService.getEventById(id)));
+                new DataResponse<>(eventService.getEventById(eventId)));
     }
 
     // schedule id로 전체 조회
     @GetMapping("/schedule/{schedule_id}")
     public ResponseEntity<? extends BasicResponse> getAllEventByScheduleID(
-            @PathVariable("schedule_id") Long id) {
-        return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByScheduleId(id)));
+            @PathVariable("schedule_id") Long scheduleId) {
+        return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByScheduleId(scheduleId)));
     }
 
     // user id로 전체 조회
-    @GetMapping("/user/{user_id}")
+    @GetMapping("/user")
     public ResponseEntity<? extends BasicResponse> getAllEventByUserID(
-            @PathVariable("user_id") Long id) {
-        return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByUserID(id)));
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByUser(token)));
 
     }
 
     // event 생성
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> createEvent(
+            @RequestHeader("Authorization") String token,
             @Valid @RequestBody EventRegistDto request) {
         return ResponseEntity.ok().body(
-                new DataResponse<>(eventService.createEvent(request)));
+                new DataResponse<>(eventService.createEvent(token, request)));
     }
 
     // event 수정
-    @PatchMapping(value = "/{event_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyEvent(
-            @PathVariable("event_id") Long id,
             @RequestBody EventModifyDto request) {
-        return ResponseEntity.ok(new DataResponse<>(eventService.modifyEvent(id, request)));
+        return ResponseEntity.ok(new DataResponse<>(eventService.modifyEvent(request)));
     }
 
 
