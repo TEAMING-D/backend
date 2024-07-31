@@ -11,7 +11,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    boolean existsByTitle(String title);
+    boolean existsByScheduleAndTitle(Schedule schedule, String title);
     List<Event> findByScheduleId(Long id);
 
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END " +

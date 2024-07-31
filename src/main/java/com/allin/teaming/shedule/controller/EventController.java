@@ -34,11 +34,10 @@ public class EventController {
     }
 
     // user id로 전체 조회
-    @GetMapping("/user")
+    @GetMapping
     public ResponseEntity<? extends BasicResponse> getAllEventByUserID(
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByUser(token)));
-
     }
 
     // event 생성
@@ -51,18 +50,20 @@ public class EventController {
     }
 
     // event 수정
-    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyEvent(
+            @RequestHeader("Authorization") String token,
             @RequestBody EventModifyDto request) {
-        return ResponseEntity.ok(new DataResponse<>(eventService.modifyEvent(request)));
+        return ResponseEntity.ok(new DataResponse<>(eventService.modifyEvent(token, request)));
     }
 
 
     // event 삭제
     @DeleteMapping("/{event_id}")
     public ResponseEntity<? extends BasicResponse> deleteEvent(
+            @RequestHeader("Authorization") String token,
             @PathVariable("event_id") Long id) {
-        eventService.deleteEvent(id);
+        eventService.deleteEvent(token, id);
         return ResponseEntity.noContent().build();
     }
 }

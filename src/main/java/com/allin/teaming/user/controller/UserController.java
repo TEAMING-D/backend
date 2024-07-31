@@ -20,11 +20,18 @@ public class UserController {
 
     // 조회
     // id로 조회
-    @GetMapping("/{user_id}")
-    public ResponseEntity<? extends BasicResponse> getUserById(
+    @GetMapping
+    public ResponseEntity<? extends BasicResponse> getUserByToken(
         @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(
-                new DataResponse<>(userService.getUserInfoById(token)));
+                new DataResponse<>(userService.getUserInfo(token)));
+    }
+
+    @GetMapping("/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getUserById(
+        @PathVariable("user_id") Long userId) {
+        return ResponseEntity.ok(
+            new DataResponse<>(userService.getUserInfoById(userId)));
     }
 
     // 이메일로 조회
@@ -58,17 +65,18 @@ public class UserController {
     // 회원 정보 수정
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifyUser(
+            @RequestHeader("Authorization") String token,
             @RequestBody UserModifyRequest request) {
-        return ResponseEntity.ok(new DataResponse<>(userService.userModify(request)));
+        return ResponseEntity.ok(new DataResponse<>(userService.userModify(token, request)));
     }
 
     // 로그아웃
 
     // 회원 탈퇴
-    @DeleteMapping("/{user_id}")
+    @DeleteMapping
     public ResponseEntity<? extends BasicResponse> deleteUser(
-            @PathVariable("user_id") Long id) {
-        userService.deleteUser(id);
+            @RequestHeader("Authorization") String token) {
+        userService.deleteUser(token);
         return ResponseEntity.noContent().build();
     }
 }
