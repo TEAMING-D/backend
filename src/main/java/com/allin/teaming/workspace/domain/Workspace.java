@@ -24,8 +24,8 @@ public class Workspace {
     private String name;
     private String description;
     private String type; // 예: 수업, 대회, 동아리, 기타
-    private LocalDate deadline;
 
+    private LocalDate deadline;
     private LocalDate created_date;
 
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -10,7 +10,9 @@ import com.allin.teaming.workspace.exception.WorkspaceNotFoundException;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import com.allin.teaming.user.repository.MembershipRepository;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,10 +64,13 @@ public class WorkspaceService {
         List<Long> users = workspaceDTO.getMembers();
         users.add(user.getId());
 
+        workspace.setCreated_date(LocalDate.now());
+
         Workspace savedWorkspace = workspaceRepository.save(workspace);
 
         // 팀원 추가
         addInitialMembers(savedWorkspace, users); // 초기 팀원 추가 메서드
+
 
         return convertToDTO(savedWorkspace);
     }
@@ -152,7 +157,6 @@ public class WorkspaceService {
     // WorkspaceDTO를 Workspace 엔티티로 변환하는 메서드
     private Workspace convertToEntity(WorkspaceDTO workspaceDTO) {
         Workspace workspace = new Workspace();
-        List<Membership> members = new ArrayList<>();
         workspace.setId(workspaceDTO.getId());
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
