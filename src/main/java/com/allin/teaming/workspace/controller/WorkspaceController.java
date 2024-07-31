@@ -65,5 +65,4 @@ public class WorkspaceController {
         workspaceService.removeUserFromWorkspace(workspaceId, userId);
         return ResponseEntity.noContent().build();
     }
-
 }

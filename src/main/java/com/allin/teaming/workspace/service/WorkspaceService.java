@@ -49,6 +49,8 @@ public class WorkspaceService {
     public WorkspaceDTO createWorkspace(WorkspaceDTO workspaceDTO) {
         Workspace workspace = convertToEntity(workspaceDTO);
         Workspace savedWorkspace = workspaceRepository.save(workspace);
+        // 팀원 추가
+        addInitialMembers(savedWorkspace, workspaceDTO.getInitialMembers()); // 초기 팀원 추가 메서드
         return convertToDTO(savedWorkspace);
     }
 
@@ -73,10 +75,8 @@ public class WorkspaceService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
         Membership membership = new Membership(user, workspace);
-
         membershipRepository.save(membership);
     }
-
 
     // 워크스페이스에서 유저 제거
     public void removeUserFromWorkspace(Long workspaceId, Long userId) {
@@ -89,7 +89,6 @@ public class WorkspaceService {
 
         membershipRepository.delete(membership);
     }
-
 
     // 주어진 userId로 모든 Workspace 조회
     public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
@@ -117,6 +116,8 @@ public class WorkspaceService {
         dto.setId(workspace.getId());
         dto.setName(workspace.getName());
         dto.setDescription(workspace.getDescription());
+        dto.setType(workspace.getType()); // 유형 설정
+        dto.setDeadline(workspace.getDeadline()); // 마감 기한 설정
         return dto;
     }
 
@@ -126,6 +127,8 @@ public class WorkspaceService {
         workspace.setId(workspaceDTO.getId());
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
+        workspace.setType(workspaceDTO.getType()); // 유형 설정
+        workspace.setDeadline(workspaceDTO.getDeadline()); // 마감 기한 설정
         return workspace;
     }
 
@@ -133,6 +136,15 @@ public class WorkspaceService {
     private void updateEntityFromDTO(WorkspaceDTO workspaceDTO, Workspace workspace) {
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
+        workspace.setType(workspaceDTO.getType()); // 유형 설정
+        workspace.setDeadline(workspaceDTO.getDeadline()); // 마감 기한 설정
+    }
+
+    // 초기 팀원 추가 메서드 (가정)
+    private void addInitialMembers(Workspace workspace, List<Long> initialMemberIds) {
+        for (Long userId : initialMemberIds) {
+            addUserToWorkspace(workspace.getId(), userId);
+        }
     }
 
     private MembershipDTO convertToMembershipDTO(Membership membership) {
