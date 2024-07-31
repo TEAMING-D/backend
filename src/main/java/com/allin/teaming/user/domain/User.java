@@ -63,6 +63,7 @@ public class User {
     @JoinColumn(name = "school_id")
     private School school;
 
+    @Column(unique = true)
     private String schoolNum;
 
     public void update(String username, String info,

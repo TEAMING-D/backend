@@ -19,38 +19,38 @@ public class ScheduleController {
     // id로 조회
     @GetMapping("/{schedule_id}")
     public ResponseEntity<? extends BasicResponse> getScheduleById(
-            @PathVariable("schedule_id") Long id) {
-        return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleById(id)));
+            @PathVariable("schedule_id") Long scheduleId) {
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleById(scheduleId)));
     }
 
     // userId로 조회
     @GetMapping("/user/{user_id}")
     public ResponseEntity<? extends BasicResponse> getScheduleByUserId(
-            @PathVariable("user_id") Long id) {
-        return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUserId(id)));
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUser(token)));
     }
 
     // schedule 생성
-//    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<? extends BasicResponse> createSchedule(
-//            @Valid @RequestBody ScheduleCreateDto request) {
-//        return ResponseEntity.ok(new DataResponse<>(scheduleService.createSchedule(request)));
-//    }
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<? extends BasicResponse> createSchedule(
+            @RequestHeader("Authorization") String token,
+            @Valid @RequestBody ScheduleCreateDto request) {
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.createSchedule(token, request)));
+    }
 
     // schedule 수정
-    @PatchMapping(value = "/{schedule_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifySchedule(
-            @PathVariable("schedule_id") Long id,
             @RequestBody ScheduleModifyDto request) {
-        return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(id, request)));
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(request)));
     }
 
 
     // schedule 삭제
     @DeleteMapping("/{schedule_id}")
     public ResponseEntity<? extends BasicResponse> deleteSchedule(
-            @PathVariable("schedule_id") Long id) {
-        scheduleService.deleteSchedule(id);
+            @PathVariable("schedule_id") Long scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
 }

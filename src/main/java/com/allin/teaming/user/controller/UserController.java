@@ -22,9 +22,9 @@ public class UserController {
     // id로 조회
     @GetMapping("/{user_id}")
     public ResponseEntity<? extends BasicResponse> getUserById(
-            @PathVariable("user_id") Long id) {
+        @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(
-                new DataResponse<>(userService.getUserInfoById(id)));
+                new DataResponse<>(userService.getUserInfoById(token)));
     }
 
     // 이메일로 조회

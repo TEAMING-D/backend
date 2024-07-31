@@ -54,6 +54,7 @@ public class UserDto {
 
 
     @Builder
+    @Getter
     public static class UserSimpleDto {
         private Long userId;
         private String username;
