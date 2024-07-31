@@ -54,11 +54,18 @@ public class WorkspaceService {
         return convertToDTO(savedWorkspace);
     }
 
-    // Workspace 수정
+    //워크스페이스 수정
     public WorkspaceDTO updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
         Workspace existingWorkspace = findWorkspaceById(id);
         updateEntityFromDTO(workspaceDTO, existingWorkspace);
+
         Workspace updatedWorkspace = workspaceRepository.save(existingWorkspace);
+
+        membershipRepository.deleteAllByWorkspace(updatedWorkspace);
+
+        if (workspaceDTO.getInitialMembers() != null) {
+            addInitialMembers(updatedWorkspace, workspaceDTO.getInitialMembers());
+        }
         return convertToDTO(updatedWorkspace);
     }
 
