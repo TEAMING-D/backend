@@ -26,7 +26,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -34,16 +34,10 @@ public class User {
 
     private String phone;
 
-    @Column(name = "school_name")
-    private String schoolName;
-
-    @Column(name = "git_id")
     private String gitId;
 
-    @Column(name = "notion_mail")
     private String notionMail;
 
-    @Column(name = "plus_mail")
     private String plusMail;
 
     @Column(columnDefinition = "TEXT")
@@ -58,16 +52,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Schedule schedule;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Membership> memberships = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Work> works = new ArrayList<>();
 
     // 학교
@@ -78,12 +72,11 @@ public class User {
     @Column(unique = true)
     private String schoolNum;
 
-    public void update(String username, String phone,String schoolName, String gitId,
+    public void update(String username, String phone, String gitId,
                        String notionMail, String plusMail, String collabTools, String email,
                        String major, String birth, String sns, String info, String schoolNum) {
         this.username = username;
         this.phone = phone;
-        this.schoolName = schoolName;
         this.gitId = gitId;
         this.notionMail = notionMail;
         this.plusMail = plusMail;

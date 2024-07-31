@@ -142,7 +142,6 @@ public class UserDto {
     // 사용자 정보 수정
     @Getter
     public static class UserModifyRequest {
-        private Long userId;
         private String username;
         private String info;
         private String schoolName;

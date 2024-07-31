@@ -24,10 +24,17 @@ public class ScheduleController {
     }
 
     // userId로 조회
-    @GetMapping("/user")
-    public ResponseEntity<? extends BasicResponse> getScheduleByUserId(
+    @GetMapping
+    public ResponseEntity<? extends BasicResponse> getSchedule(
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUser(token)));
+    }
+
+    // userId로 조회
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity<? extends BasicResponse> getScheduleByUserId(
+        @PathVariable("user_id") Long userId) {
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleByUserId(userId)));
     }
 
     // schedule 생성
@@ -39,7 +46,7 @@ public class ScheduleController {
     }
 
     // schedule 수정
-    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifySchedule(
             @RequestBody ScheduleModifyDto request) {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(request)));

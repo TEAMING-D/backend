@@ -23,23 +23,29 @@ public class UserService {
 
     private final JwtUtil jwtUtil;
 
-    private User getUserByToken(String token) {
+    private User findUserByToken(String token) {
         return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
             .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
     // id로 회원 조회 (마이페이지)
     @Transactional(readOnly = true)
-    public UserDetailDto getUserInfoById(String token) {
-        return UserDetailDto.of(getUserByToken(token));
+    public UserDetailDto getUserInfo(String token) {
+        return UserDetailDto.of(findUserByToken(token));
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetailDto getUserInfoById(Long userId) {
+        return userRepository.findById(userId).map(UserDetailDto::of)
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다. "));
     }
 
     // 이메일로 회원조회
     @Transactional(readOnly = true)
     public UserDetailDto getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(UserDetailDto::of)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+            .map(UserDetailDto::of)
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
     // 회원 전체 조회
@@ -70,9 +76,8 @@ public class UserService {
 
     // 사용자 정보 입력(수정)
     @Transactional
-    public IdResponse userModify(UserModifyRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+    public IdResponse userModify(String token, UserModifyRequest request) {
+        User user = findUserByToken(token);
 
         // 학교 가져오기 -> 리스트에서 선택
         School school = null;
@@ -85,7 +90,6 @@ public class UserService {
         user.update(
                 request.getUsername(),
                 request.getPhone(),
-                request.getSchoolName(),
                 request.getGitId(),
                 request.getNotionMail(),
                 request.getPlusMail(),
@@ -132,9 +136,8 @@ public class UserService {
     // 탈퇴
     // TODO: 회원 삭제 시 처리 추가
     @Transactional
-    public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습ㄴ디ㅏ. "));
+    public void deleteUser(String token) {
+        User user = findUserByToken(token);
 
         // 업무 자동 삭제
         userRepository.delete(user);

@@ -64,11 +64,13 @@ public class EventService {
     // event 생성
     @Transactional
     public IdResponse createEvent(String token, EventRegistDto request) {
-        if (eventRepository.existsByTitle(request.getTitle())) {
+
+        Schedule schedule = findUserByToken(token).getSchedule();
+
+        if (eventRepository.existsByScheduleAndTitle(schedule, request.getTitle())) {
             throw new RuntimeException("이미 존재하는 이벤트 입니다.");
         }
-        User user = findUserByToken(token);
-        Schedule schedule = user.getSchedule();
+
         // 겹치는 시간 확인
         if (eventRepository.existsByScheduleAndWeekAndTimeRange(schedule, request.getWeek(), request.getStart_time(), request.getEnd_time())) {
             throw new IllegalArgumentException("일정 시간이 겹칩니다.");
@@ -83,11 +85,17 @@ public class EventService {
     // Todo : patch 구현
     // TODO : event 수정 시 회의 도출 어케 할건지
     @Transactional
-    public IdResponse modifyEvent(EventModifyDto request) {
-        Event event = findEvent(request.getEventId());
-        Schedule schedule = findSchedule(request.getScheduleId());
+    public IdResponse modifyEvent(String token, EventModifyDto request) {
+        User user = findUserByToken(token);
 
-        if (eventRepository.existsByTitle(request.getTitle())) {
+        Event event = findEvent(request.getEventId());
+        Schedule schedule = event.getSchedule();
+
+        if (event.getSchedule() != user.getSchedule()) {
+            throw new IllegalArgumentException("해당 일정을 수정할 권한이 없습니다. ");
+        }
+
+        if (eventRepository.existsByScheduleAndTitle(schedule, request.getTitle())) {
             throw new IllegalArgumentException("해당 이름을 가진 일정이 존재합니다. ");
         }
 
@@ -102,8 +110,13 @@ public class EventService {
 
     // event 삭제
     @Transactional
-    public void deleteEvent(Long id) {
+    public void deleteEvent(String token, Long id) {
+        User user = findUserByToken(token);
         Event event = findEvent(id);
+
+        if (event.getSchedule() != user.getSchedule()) {
+            throw new IllegalArgumentException("해당 일정을 삭제할 권한이 없습니다. ");
+        }
         eventRepository.delete(event);
     }
 
