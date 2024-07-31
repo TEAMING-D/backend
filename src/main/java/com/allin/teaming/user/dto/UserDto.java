@@ -96,7 +96,6 @@ public class UserDto {
         private Long userId;
         private String email;
         private String username;
-
         private String info;
         private String schoolName;
         private String schoolNum;
@@ -114,9 +113,13 @@ public class UserDto {
                     .schoolName(user.getSchool().getName())
                     .schoolNum(user.getSchoolNum())
                     .major(user.getMajor())
+                    .birth(user.getBirth())
+                    .sns(user.getSns())
+                    .collabTools(user.getCollabTools())
                     .build();
         }
     }
+
 
     @Builder
     @Getter
