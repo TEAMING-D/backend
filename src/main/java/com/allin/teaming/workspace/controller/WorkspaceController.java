@@ -27,8 +27,10 @@ public class WorkspaceController {
     }
 
     @PostMapping
-    public ResponseEntity<WorkspaceDTO> createWorkspace(@RequestBody WorkspaceDTO workspaceDTO) {
-        return ResponseEntity.ok(workspaceService.createWorkspace(workspaceDTO));
+    public ResponseEntity<WorkspaceDTO> createWorkspace(
+        @RequestBody WorkspaceDTO workspaceDTO,
+        @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(workspaceService.createWorkspace(token, workspaceDTO));
     }
 
     @PutMapping("/{id}")
