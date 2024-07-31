@@ -77,7 +77,7 @@ public class User {
 
     private String schoolNum;
 
-    public void update(String username, String phone,String schoolName, String gitId,
+    public void update(String username, String phone, String schoolName, String gitId,
                        String notionMail, String plusMail, String collabTools, String email,
                        String major, String birth, String sns, String info, String schoolNum) {
         this.username = username;
