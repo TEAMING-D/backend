@@ -1,5 +1,6 @@
 package com.allin.teaming.workspace.service;
 
+import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.workspace.domain.Assignment;
 import com.allin.teaming.workspace.domain.Work;
 import com.allin.teaming.workspace.domain.WorkStatus;
@@ -32,11 +33,20 @@ public class WorkService {
     private final AssignmentRepository assignmentRepository;
     private final UserRepository userRepository;
 
+    private final JwtUtil jwtUtil;
+
+    private User findUserByToken(String token) {
+        return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
+    }
+
     // 업무 생성
     @Transactional
-    public WorkDTO createWork(Long workspaceId, WorkDTO workDTO) {
+    public WorkDTO createWork(String token, Long workspaceId, WorkDTO workDTO) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new IllegalArgumentException("Workspace not found with id: " + workspaceId));
+
+        User user = findUserByToken(token);
 
         Work work = new Work();
         work.setName(workDTO.getName());
@@ -50,7 +60,10 @@ public class WorkService {
 
         work = workRepository.save(work);
 
-        validateAndAssignUsers(workDTO.getAssignedUserIds(), workspaceId, work);
+        List<Long> assignedUserIds = workDTO.getAssignedUserIds();
+        assignedUserIds.add(user.getId());
+
+        validateAndAssignUsers(assignedUserIds, workspaceId, work);
 
         return convertToDTO(work);
     }

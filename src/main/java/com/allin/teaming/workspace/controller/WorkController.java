@@ -17,8 +17,9 @@ public class WorkController {
     @PostMapping
     public ResponseEntity<WorkDTO> createWork(
             @PathVariable Long workspaceId,
-            @RequestBody WorkDTO workDTO) {
-        WorkDTO createdWork = workService.createWork(workspaceId, workDTO);
+            @RequestBody WorkDTO workDTO,
+            @RequestHeader("Authorization") String token) {
+        WorkDTO createdWork = workService.createWork(token, workspaceId, workDTO);
         return ResponseEntity.ok(createdWork);
     }
 

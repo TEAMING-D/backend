@@ -1,5 +1,6 @@
 package com.allin.teaming.workspace.service;
 
+import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
@@ -9,6 +10,7 @@ import com.allin.teaming.workspace.exception.WorkspaceNotFoundException;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import com.allin.teaming.user.repository.MembershipRepository;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,13 @@ public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
+
+    private final JwtUtil jwtUtil;
+
+    private User findUserByToken(String token) {
+        return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
+    }
 
     // 모든 Workspace 조회
     public List<WorkspaceDTO> getAllWorkspaces() {
@@ -46,11 +55,18 @@ public class WorkspaceService {
     }
 
     // Workspace 생성
-    public WorkspaceDTO createWorkspace(WorkspaceDTO workspaceDTO) {
+    public WorkspaceDTO createWorkspace(String token, WorkspaceDTO workspaceDTO) {
+        User user = findUserByToken(token);
         Workspace workspace = convertToEntity(workspaceDTO);
+
+        List<Long> users = workspaceDTO.getMembers();
+        users.add(user.getId());
+
         Workspace savedWorkspace = workspaceRepository.save(workspace);
+
         // 팀원 추가
-        addInitialMembers(savedWorkspace, workspaceDTO.getMembers()); // 초기 팀원 추가 메서드
+        addInitialMembers(savedWorkspace, users); // 초기 팀원 추가 메서드
+
         return convertToDTO(savedWorkspace);
     }
 
@@ -136,6 +152,7 @@ public class WorkspaceService {
     // WorkspaceDTO를 Workspace 엔티티로 변환하는 메서드
     private Workspace convertToEntity(WorkspaceDTO workspaceDTO) {
         Workspace workspace = new Workspace();
+        List<Membership> members = new ArrayList<>();
         workspace.setId(workspaceDTO.getId());
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
