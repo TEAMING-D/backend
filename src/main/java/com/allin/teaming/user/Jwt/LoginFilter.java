@@ -7,6 +7,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +28,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    CachedBodyHttpServletRequest cachedBodyHttpServletRequest;
+
+
     @Override
     protected String obtainUsername(HttpServletRequest request) {
         return request.getParameter("email");
@@ -35,21 +41,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = null;
         String password = null;
 
-        if ("application/json".equals(request.getContentType())) {
-            try {
+        try {
+            cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(request);
+            if ("application/json".equals(cachedBodyHttpServletRequest.getContentType())) {
+
                 ObjectMapper objectMapper = new ObjectMapper();
-                Map<String, String> jsonRequest = objectMapper.readValue(request.getInputStream(), new TypeReference<Map<String, String>>() {});
+                Map<String, String> jsonRequest = objectMapper.readValue(cachedBodyHttpServletRequest.getInputStream(), new TypeReference<Map<String, String>>() {});
                 email = jsonRequest.get("email");
                 password = jsonRequest.get("password");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            email = obtainUsername(request);
-            password = obtainPassword(request);
-        }
 
-        System.out.println(email);
+            } else {
+                email = obtainUsername(cachedBodyHttpServletRequest);
+                password = obtainPassword(cachedBodyHttpServletRequest);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
         System.out.println("loginfilter");
@@ -75,9 +82,29 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        System.out.println("login failed");
-        response.setStatus(401);
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+        HttpServletResponse response, AuthenticationException failed)
+        throws IOException, ServletException {
+
+
+        BufferedReader reader = cachedBodyHttpServletRequest.getReader();
+        String requestBody = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+
+        System.out.println("login failed" + failed.getMessage());
+        System.out.println("Request URI: " + cachedBodyHttpServletRequest.getRequestURI());
+        System.out.println("Request Method: " + cachedBodyHttpServletRequest.getMethod());
+
+        System.out.println("Request Headers: " + Collections.list(cachedBodyHttpServletRequest.getHeaderNames()).stream()
+            .collect(Collectors.toMap(h -> h, cachedBodyHttpServletRequest::getHeader)));
+
+        System.out.println("Request Body: " + requestBody);
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"" + failed.getMessage() + "\"}");
+
+        System.out.println("Response Status: " + response.getStatus());
+        System.out.println("Response Content-Type: " + response.getContentType());
     }
 }
 
