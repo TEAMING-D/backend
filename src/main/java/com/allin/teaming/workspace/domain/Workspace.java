@@ -22,12 +22,12 @@ public class Workspace {
     private Long id;
     private String name;
     private String description;
-
-    // 새로운 필드 추가
     private String type; // 예: 수업, 대회, 동아리, 기타
-    private LocalDate deadline; // 마감 기한
+    private LocalDate deadline;
 
-    @OneToMany(mappedBy = "workspace")
+    private LocalDate created_date;
+
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Membership> memberships = new ArrayList<>();
 
     @OneToMany(mappedBy = "workspace")
@@ -35,8 +35,6 @@ public class Workspace {
 
     @OneToMany(mappedBy = "workspace")
     private List<Work> works = new ArrayList<>();
-
-    private LocalDate created_date;
 
     public List<Membership> getMembers() {
         return memberships;
