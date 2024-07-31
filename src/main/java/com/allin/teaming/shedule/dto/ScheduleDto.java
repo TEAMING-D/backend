@@ -43,8 +43,6 @@ public class ScheduleDto {
 
         // Long 타입에는 notnull 적용해야 함
         // String 타입에는 notBlank
-        @NotNull
-        private Long userId;
 
         public Schedule toEntity(User user) {
             return Schedule.builder()
@@ -54,13 +52,9 @@ public class ScheduleDto {
         }
     }
 
-    static public class ScheduleInitRequestDto {
-        private String url;
-
-    }
-
     @Getter
     static public class ScheduleModifyDto {
+        private Long scheduleId;
         private String title;
     }
 

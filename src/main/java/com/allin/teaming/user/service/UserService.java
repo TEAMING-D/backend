@@ -1,5 +1,6 @@
 package com.allin.teaming.user.service;
 
+import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto.*;
@@ -20,12 +21,17 @@ public class UserService {
     private final SchoolRepository schoolRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final JwtUtil jwtUtil;
+
+    private User getUserByToken(String token) {
+        return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
+    }
+
     // id로 회원 조회 (마이페이지)
     @Transactional(readOnly = true)
-    public UserDetailDto getUserInfoById(Long userId) {
-        return userRepository.findById(userId)
-                .map(UserDetailDto::of)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+    public UserDetailDto getUserInfoById(String token) {
+        return UserDetailDto.of(getUserByToken(token));
     }
 
     // 이메일로 회원조회
