@@ -1,5 +1,6 @@
 package com.allin.teaming.workspace.service;
 
+import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
@@ -24,6 +25,12 @@ public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
+    private final JwtUtil jwtUtil;
+
+    private User getUserByToken(String token) {
+        return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
+    }
 
     // 모든 Workspace 조회
     public List<WorkspaceDTO> getAllWorkspaces() {
@@ -98,9 +105,8 @@ public class WorkspaceService {
     }
 
     // 주어진 userId로 모든 Workspace 조회
-    public List<WorkspaceDTO> getAllWorkspacesByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+    public List<WorkspaceDTO> getAllWorkspacesByUserId(String token) {
+        User user = getUserByToken(token);
         List<Workspace> workspaces = membershipRepository.findAllByUser(user).stream()
                 .map(Membership::getWorkspace)
                 .collect(Collectors.toList());
