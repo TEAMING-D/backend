@@ -89,6 +89,7 @@ public class User {
         this.schoolNum = schoolNum;
     }
 
+
     public void updateSchool(School school) {
         this.school = school;
     }

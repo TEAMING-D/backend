@@ -20,12 +20,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final SchoolRepository schoolRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final JwtUtil jwtUtil;
 
     private User findUserByToken(String token) {
         return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
     // id로 회원 조회 (마이페이지)
@@ -37,23 +36,21 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailDto getUserInfoById(Long userId) {
         return userRepository.findById(userId).map(UserDetailDto::of)
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다. "));
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
     // 이메일로 회원조회
     @Transactional(readOnly = true)
     public UserDetailDto getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-            .map(UserDetailDto::of)
-            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+                .map(UserDetailDto::of)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
 
     // 회원 전체 조회
     @Transactional(readOnly = true)
     public List<UserDetailDto> getAllUserInfo() {
-        List<User> users = userRepository.findAll();
-
-        return users.stream()
+        return userRepository.findAll().stream()
                 .map(UserDetailDto::of)
                 .collect(Collectors.toList());
     }
@@ -104,7 +101,8 @@ public class UserService {
         return IdResponse.of(user);
     }
 
- //   UserModifyRequest(Long userId, String username, String info, String schoolName, String schoolNum, String phone, Long schoolId, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
+
+    //   UserModifyRequest(Long userId, String username, String info, String schoolName, String schoolNum, String phone, Long schoolId, String gitId, String notionMail, String plusMail, String email, String major, String birth, String sns, String collabTools) {
 
 
         // 회원가입
