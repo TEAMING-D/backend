@@ -11,6 +11,7 @@ import lombok.Setter;
 @Entity @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Membership {
 
     @Id @Column(name = "membership_id")
