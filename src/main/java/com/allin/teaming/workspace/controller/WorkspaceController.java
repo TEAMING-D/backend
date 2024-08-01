@@ -48,7 +48,7 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     public List<WorkspaceDTO> getAllWorkspacesByUserId(@RequestHeader("Authorization") String token) {
         return workspaceService.getAllWorkspacesByUserId(token);
     }
