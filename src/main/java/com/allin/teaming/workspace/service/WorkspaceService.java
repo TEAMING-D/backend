@@ -35,8 +35,6 @@ public class WorkspaceService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
-    private final JwtUtil jwtUtil;
-
     private User findUserByToken(String token) {
         return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
             .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
