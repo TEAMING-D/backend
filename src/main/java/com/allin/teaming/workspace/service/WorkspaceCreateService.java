@@ -49,7 +49,7 @@ public class WorkspaceCreateService {
         System.out.println("여긴되나?");
         List<Long> userIds = new ArrayList<>();
         if (request != null) {
-            userIds.addAll(request.getInitMembers());
+            userIds.addAll(request.getMembers());
         }
         userIds.add(user.getId());
 
