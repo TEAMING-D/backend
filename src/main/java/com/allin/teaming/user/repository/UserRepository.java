@@ -1,5 +1,6 @@
 package com.allin.teaming.user.repository;
 
+import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,5 +15,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhone(String Phone);
     boolean existsByEmail(String email);
 
-    boolean existsByUsernameAndSchoolNum(String username, String schoolNum);
+    boolean existsBySchoolAndSchoolNum(School school, String schoolNum);
 }

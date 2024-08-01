@@ -116,14 +116,14 @@ public class UserService {
             throw new IllegalArgumentException("이미 가입되어 있는 이메일입니다. ");
         }
 
-        if (userRepository.existsByUsernameAndSchoolNum(request.getUsername(), request.getSchoolNum())) {
-            throw new IllegalArgumentException("이미 가입되어 있는 사용자(학번) 입니다. ");
-        }
-
         School school = null;
         if (request.getSchoolName() != null) {
             school = schoolRepository.findByName(request.getSchoolName())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 학교를 조회할 수 없습니다. "));
+                .orElseThrow(() -> new IllegalArgumentException("해당 학교를 조회할 수 없습니다. "));
+
+            if (userRepository.existsBySchoolAndSchoolNum(school, request.getSchoolNum())) {
+                throw new IllegalArgumentException("이미 가입되어 있는 사용자(학번) 입니다. ");
+            }
         }
 
         User user = request.toUser(school, bCryptPasswordEncoder.encode(request.getPassword()));
