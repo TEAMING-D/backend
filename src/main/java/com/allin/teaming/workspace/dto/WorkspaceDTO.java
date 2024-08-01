@@ -20,13 +20,13 @@ public class WorkspaceDTO {
     }
 
     // 필드를 초기화하는 생성자
-    public WorkspaceDTO(Long id, String name, String description, String type, LocalDate deadline, List<Long> members) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.deadline = deadline;
-        this.members = members;
-    }
+//    public WorkspaceDTO(Long id, String name, String description, String type, LocalDate deadline, List<Long> members) {
+//        this.id = id;
+//        this.name = name;
+//        this.description = description;
+//        this.type = type;
+//        this.deadline = deadline;
+//        this.members = members;
+//    }
 }
 

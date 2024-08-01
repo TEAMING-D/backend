@@ -30,13 +30,6 @@ public class WorkspaceService {
     private final MembershipRepository membershipRepository;
     private final JwtUtil jwtUtil;
 
-    private User getUserByToken(String token) {
-        return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
-    }
-
-    private final JwtUtil jwtUtil;
-
     private User findUserByToken(String token) {
         return userRepository.findByEmail(jwtUtil.getEmail(token.split(" ")[1]))
             .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
@@ -63,6 +56,7 @@ public class WorkspaceService {
     }
 
     // Workspace 생성
+    @Transactional
     public WorkspaceDTO createWorkspace(String token, WorkspaceDTO workspaceDTO) {
         User user = findUserByToken(token);
         Workspace workspace = convertToEntity(workspaceDTO);
@@ -77,10 +71,12 @@ public class WorkspaceService {
         // 팀원 추가
         addInitialMembers(savedWorkspace, users); // 초기 팀원 추가 메서드
 
+
         return convertToDTO(savedWorkspace);
     }
 
     // 워크스페이스 수정
+    @Transactional
     public WorkspaceDTO updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
         Workspace existingWorkspace = findWorkspaceById(id);
         updateEntityFromDTO(workspaceDTO, existingWorkspace);
@@ -102,6 +98,7 @@ public class WorkspaceService {
     }
 
     // 워크스페이스에 유저 추가
+    @Transactional
     public void addUserToWorkspace(Long workspaceId, Long userId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         User user = userRepository.findById(userId)
@@ -112,6 +109,7 @@ public class WorkspaceService {
     }
 
     // 워크스페이스에서 유저 제거
+    @Transactional
     public void removeUserFromWorkspace(Long workspaceId, Long userId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         User user = userRepository.findById(userId)
@@ -124,8 +122,9 @@ public class WorkspaceService {
     }
 
     // 주어진 userId로 모든 Workspace 조회
+    @Transactional(readOnly = true)
     public List<WorkspaceDTO> getAllWorkspacesByUserId(String token) {
-        User user = getUserByToken(token);
+        User user = findUserByToken(token);
         List<Workspace> workspaces = membershipRepository.findAllByUser(user).stream()
                 .map(Membership::getWorkspace)
                 .collect(Collectors.toList());
@@ -135,6 +134,7 @@ public class WorkspaceService {
     }
 
     // 주어진 workspaceId의 모든 멤버 조회
+    @Transactional(readOnly = true)
     public List<MembershipDTO> getAllMembersOfWorkspace(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         return workspace.getMembers().stream()
@@ -183,6 +183,7 @@ public class WorkspaceService {
             addUserToWorkspace(workspace.getId(), userId);
         }
     }
+
 
     private MembershipDTO convertToMembershipDTO(Membership membership) {
         return new MembershipDTO(

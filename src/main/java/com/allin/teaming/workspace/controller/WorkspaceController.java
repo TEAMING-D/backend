@@ -1,7 +1,10 @@
 package com.allin.teaming.workspace.controller;
 
+import com.allin.teaming.workspace.dto.WorkspaceCreateRequestDto;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
 import com.allin.teaming.workspace.dto.MembershipDTO;
+import com.allin.teaming.workspace.dto.WorkspaceResponseDto;
+import com.allin.teaming.workspace.service.WorkspaceCreateService;
 import com.allin.teaming.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import java.util.List;
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
+    private final WorkspaceCreateService workspaceCreateService;
 
     @GetMapping
     public List<WorkspaceDTO> getAllWorkspaces() {
@@ -27,10 +31,10 @@ public class WorkspaceController {
     }
 
     @PostMapping
-    public ResponseEntity<WorkspaceDTO> createWorkspace(
-        @RequestBody WorkspaceDTO workspaceDTO,
+    public ResponseEntity<WorkspaceResponseDto> createWorkspace(
+        @RequestBody WorkspaceCreateRequestDto request,
         @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(workspaceService.createWorkspace(token, workspaceDTO));
+        return ResponseEntity.ok(workspaceCreateService.createWorkspace(token, request));
     }
 
     @PutMapping("/{id}")
