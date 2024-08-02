@@ -13,6 +13,7 @@ public class WorkspaceDTO {
     private String description;
     private String type; // 워크스페이스 유형 (수업, 대회, 동아리, 기타 등)
     private LocalDate deadline; // 마감 기한
+    private LocalDate createdDate;
     private List<Long> members; // 현재 팀원 ID 리스트
 
     // 기본 생성자

@@ -15,7 +15,9 @@ public class WorkspaceResponseDto {
     private String description;
     private String type; // 워크스페이스 유형 (수업, 대회, 동아리, 기타 등)
     private LocalDate deadline; // 마감 기한
+    private LocalDate createdDate;
     private List<MembershipDTO> members;
+
 
     public static WorkspaceResponseDto toDto(Workspace workspace, List<MembershipDTO> members) {
         return WorkspaceResponseDto.builder()
@@ -23,6 +25,7 @@ public class WorkspaceResponseDto {
                 .name(workspace.getName())
                 .description(workspace.getDescription())
                 .type(workspace.getType())
+                .createdDate(workspace.getCreated_date())
                 .deadline(workspace.getDeadline())
                 .members(members)
                 .build();

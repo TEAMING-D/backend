@@ -21,24 +21,24 @@ public class WorkspaceController {
     private final WorkspaceCreateService workspaceCreateService;
 
     @GetMapping
-    public List<WorkspaceDTO> getAllWorkspaces() {
+    public List<WorkspaceResponseDto> getAllWorkspaces() {
         return workspaceService.getAllWorkspaces();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceDTO> getWorkspaceById(@PathVariable Long id) {
+    public ResponseEntity<WorkspaceResponseDto> getWorkspaceById(@PathVariable Long id) {
         return ResponseEntity.ok(workspaceService.getWorkspaceById(id));
     }
 
     @PostMapping
     public ResponseEntity<WorkspaceResponseDto> createWorkspace(
-        @RequestBody WorkspaceCreateRequestDto request,
-        @RequestHeader("Authorization") String token) {
+            @RequestBody WorkspaceCreateRequestDto request,
+            @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(workspaceCreateService.createWorkspace(token, request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkspaceDTO> updateWorkspace(@PathVariable Long id, @RequestBody WorkspaceDTO workspaceDTO) {
+    public ResponseEntity<WorkspaceResponseDto> updateWorkspace(@PathVariable Long id, @RequestBody WorkspaceDTO workspaceDTO) {
         return ResponseEntity.ok(workspaceService.updateWorkspace(id, workspaceDTO));
     }
 
@@ -48,8 +48,8 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user")
-    public List<WorkspaceDTO> getAllWorkspacesByUserId(@RequestHeader("Authorization") String token) {
+    @GetMapping("/user/{userId}")
+    public List<WorkspaceResponseDto> getAllWorkspacesByUserId(@RequestHeader("Authorization") String token) {
         return workspaceService.getAllWorkspacesByUserId(token);
     }
 
