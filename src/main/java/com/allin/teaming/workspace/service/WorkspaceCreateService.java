@@ -38,6 +38,7 @@ public class WorkspaceCreateService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
     }
+
     // Workspace 생성
     @Transactional
     public WorkspaceResponseDto createWorkspace(String token, WorkspaceCreateRequestDto request) {
@@ -62,7 +63,6 @@ public class WorkspaceCreateService {
             membershipRepository.save(membership);
             membershipDTOS.add(MembershipDTO.toDto(membership));
         }
-
         return WorkspaceResponseDto.toDto(workspace, membershipDTOS);
     }
 
