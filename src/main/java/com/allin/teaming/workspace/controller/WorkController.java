@@ -23,20 +23,20 @@ public class WorkController {
         return ResponseEntity.ok(createdWork);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{workId}")
     public ResponseEntity<WorkDTO> updateWork(
             @PathVariable Long workspaceId,
-            @PathVariable Long id,
+            @PathVariable Long workId,
             @RequestBody WorkDTO workDTO) {
-        WorkDTO updatedWork = workService.updateWork(workspaceId, id, workDTO);
+        WorkDTO updatedWork = workService.updateWork(workId, workspaceId, workDTO);
         return ResponseEntity.ok(updatedWork);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{workId}")
     public ResponseEntity<Void> deleteWork(
             @PathVariable Long workspaceId,
-            @PathVariable Long id) {
-        workService.deleteWork(workspaceId, id);
+            @PathVariable Long workId) {
+        workService.deleteWork(workspaceId, workId);
         return ResponseEntity.noContent().build();
     }
 

@@ -3,18 +3,19 @@ package com.allin.teaming.user.domain;
 import com.allin.teaming.workspace.domain.Workspace;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Entity @Getter
+@Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "membership", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "workspace_id"})
+})
 public class Membership {
 
-    @Id @Column(name = "membership_id")
+    @Id
+    @Column(name = "membership_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,16 +28,15 @@ public class Membership {
 
     @ManyToOne
     @Setter
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "workspace_id")
+    @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
 
     public Membership(User user, Workspace workspace) {
         this.user = user;
         this.workspace = workspace;
     }
-
 }

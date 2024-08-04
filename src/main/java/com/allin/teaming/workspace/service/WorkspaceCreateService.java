@@ -47,7 +47,6 @@ public class WorkspaceCreateService {
 
         workspaceRepository.save(workspace);
 
-        System.out.println("여긴되나?");
         List<Long> userIds = new ArrayList<>();
         if (request != null) {
             userIds.addAll(request.getMembers());
@@ -56,14 +55,16 @@ public class WorkspaceCreateService {
 
         List<MembershipDTO> membershipDTOS = new ArrayList<>();
         for (Long userId : userIds) {
-            Membership membership = Membership.builder()
-                    .user(findUserById(userId))
-                    .workspace(workspace)
-                    .build();
-            membershipRepository.save(membership);
-            membershipDTOS.add(MembershipDTO.toDto(membership));
+            if (!membershipRepository.existsByWorkspaceIdAndUserId(workspace.getId(), userId)) {
+                Membership membership = Membership.builder()
+                        .user(findUserById(userId))
+                        .workspace(workspace)
+                        .build();
+                membershipRepository.save(membership);
+                membershipDTOS.add(MembershipDTO.toDto(membership));
+            }
         }
+
         return WorkspaceResponseDto.toDto(workspace, membershipDTOS);
     }
-
 }
