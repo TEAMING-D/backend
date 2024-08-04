@@ -39,14 +39,19 @@ public class ScheduleService {
     // 내 시간표 조회
     @Transactional(readOnly = true)
     public ScheduleDetailDto getScheduleByUser(String token) {
-        return ScheduleDetailDto.of(findUserByToken(token).getSchedule());
+        User user = findUserByToken(token);
+        if (user.getSchedule() != null) {
+            return ScheduleDetailDto.of(findUserByToken(token).getSchedule());
+        } else throw new IllegalArgumentException("아직 시간표를 생성하지 않았습니다. ");
     }
 
     @Transactional(readOnly = true)
     public ScheduleDetailDto getScheduleByUserId(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
-        return ScheduleDetailDto.of(user.getSchedule());
+        if (user.getSchedule() != null) {
+            return ScheduleDetailDto.of(user.getSchedule());
+        }else throw new IllegalArgumentException("아직 시간표를 생성하지 않았습니다. ");
     }
 
     // 초기 스케줄 생성
@@ -69,6 +74,8 @@ public class ScheduleService {
         schedule.update(request.getTitle());
         return IdResponse.of(schedule);
     }
+
+
 
     // schedule 삭제
     @Transactional
