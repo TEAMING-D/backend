@@ -67,6 +67,27 @@ public class WorkspaceService {
                 .orElseThrow(() -> new WorkspaceNotFoundException("Workspace not found with id: " + id));
     }
 
+    // Workspace 생성
+    @Transactional
+    public WorkspaceDTO createWorkspace(String token, WorkspaceDTO workspaceDTO) {
+
+        User user = findUserByToken(token);
+        Workspace workspace = convertToEntity(workspaceDTO);
+        workspace.setCreated_date(LocalDate.now());
+
+        Workspace savedWorkspace = workspaceRepository.save(workspace);
+
+        List<Long> users = workspaceDTO.getMembers();
+        users.add(user.getId());
+        System.out.println("<<<<<<" + users + ">>>>>>>");
+
+        // 팀원 추가
+        addInitialMembers(savedWorkspace, users); // 초기 팀원 추가 메서드
+
+
+        return convertToDTO(savedWorkspace);
+    }
+
     // 워크스페이스 수정
     @Transactional
     public WorkspaceResponseDto updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
@@ -105,16 +126,6 @@ public class WorkspaceService {
         membershipRepository.save(membership);
     }
 
-    // 한번에 여러 유저 추가하기
-    @Transactional
-    public void addUsersToWorkspace(Long workspaceId, List<Long> userIds) {
-        Workspace workspace = findWorkspaceById(workspaceId);
-        List<User> users = userIds.stream().map(this::findUserById).toList();
-
-        List<Membership> membership = users.stream().map((user) -> new Membership(user, workspace)).toList();
-        membership.forEach(membershipRepository::save);
-    }
-
     // 워크스페이스에서 유저 제거
     @Transactional
     public void removeUserFromWorkspace(Long workspaceId, Long userId) {
@@ -130,7 +141,7 @@ public class WorkspaceService {
 
     // 주어진 userId로 모든 Workspace 조회
     @Transactional(readOnly = true)
-    public List<WorkspaceResponseDto> getAllWorkspacesByUser(String token) {
+    public List<WorkspaceResponseDto> getAllWorkspacesByUserId(String token) {
         User user = findUserByToken(token);
         List<Workspace> workspaces = membershipRepository.findAllByUser(user).stream()
                 .map(Membership::getWorkspace)

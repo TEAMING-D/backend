@@ -58,11 +58,11 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
-    //사용자의모든 워크 스페이스 조회
+    //사용자의 모든 워크 스페이스 조회
     @GetMapping("/user")
     public List<WorkspaceResponseDto> getAllWorkspacesByUserId(
             @RequestHeader("Authorization") String token) {
-        return workspaceService.getAllWorkspacesByUser(token);
+        return workspaceService.getAllWorkspacesByUserId(token);
     }
 
     // 워크 스페이스의 모든 멤버 조회
@@ -78,15 +78,6 @@ public class WorkspaceController {
             @PathVariable Long workspaceId,
             @PathVariable Long userId) {
         workspaceService.addUserToWorkspace(workspaceId, userId);
-        return ResponseEntity.noContent().build();
-    }
-
-    // 워크스페이스에 여러 멤버를 한번에 추가
-    @PostMapping("/{workspaceId}/users")
-    public ResponseEntity<Void> addUsersToWorkspace(
-            @PathVariable Long workspaceId,
-            @RequestBody List<Long> userIds) {
-        workspaceService.addUsersToWorkspace(workspaceId, userIds);
         return ResponseEntity.noContent().build();
     }
 

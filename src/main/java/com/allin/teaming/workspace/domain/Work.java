@@ -8,11 +8,14 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 @NoArgsConstructor
 public class Work {
-    @Id @Column(name = "work_id")
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "work_id")
     private Long id;
 
     @ManyToOne
@@ -24,17 +27,12 @@ public class Work {
     private User user;
 
     private String name;
-
     private String description;
-
     private LocalDate created_at;
-
     private LocalDate due_date;
 
     @Enumerated(EnumType.STRING)
-    private WorkStatus Status;
-
+    private WorkStatus status;
     private double progress;
-
-    private int weight=1;
+    private int weight = 1;
 }

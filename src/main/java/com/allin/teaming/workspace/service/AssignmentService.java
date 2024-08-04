@@ -29,9 +29,8 @@ public class AssignmentService {
         Membership membership = membershipRepository.findById(membershipId)
                 .orElseThrow(() -> new IllegalArgumentException("Membership not found with id: " + membershipId));
 
-        // Check if assignment already exists
-        Optional<Assignment> existingAssignment = assignmentRepository.findByWorkAndMembership(work, membership);
-        if (existingAssignment.isPresent()) {
+        // 중복 확인
+        if (assignmentRepository.existsByWorkIdAndMembershipId(workId, membershipId)) {
             throw new IllegalArgumentException("Assignment already exists for workId: " + workId + " and membershipId: " + membershipId);
         }
 
@@ -83,6 +82,13 @@ public class AssignmentService {
         dto.setWorkId(assignment.getWork().getId());
         dto.setMembershipId(assignment.getMembership().getId());
         dto.setScore(assignment.getScore());
+
+        // Membership에서 사용자 정보 가져오기
+        Membership membership = assignment.getMembership();
+        dto.setUserId(membership.getUser().getId());
+        dto.setUserName(membership.getUser().getUsername());
+        dto.setWorkspaceId(membership.getWorkspace().getId());
+
         return dto;
     }
 }
