@@ -36,6 +36,11 @@ public class WorkspaceService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
+    }
+
     // 모든 Workspace 조회
     public List<WorkspaceResponseDto> getAllWorkspaces() {
         List<Workspace> workspaces = workspaceRepository.findAll();
