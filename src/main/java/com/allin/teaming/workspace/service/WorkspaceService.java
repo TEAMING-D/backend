@@ -192,6 +192,10 @@ public class WorkspaceService {
         workspace.setCreated_date(workspaceDTO.getCreatedDate());
     }
 
+    // TODO : 멤버들의 시간표 모두 조회
+    // TODO : 특정 유저의 시간표 조회
+
+
     // 초기 팀원 추가 메서드
     private void addInitialMembers(Workspace workspace, List<Long> initialMemberIds) {
         for (Long userId : initialMemberIds) {
