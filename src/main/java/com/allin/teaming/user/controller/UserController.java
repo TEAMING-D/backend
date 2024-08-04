@@ -3,6 +3,7 @@ package com.allin.teaming.user.controller;
 import com.allin.teaming.Response.BasicResponse;
 import com.allin.teaming.Response.DataResponse;
 import com.allin.teaming.user.dto.UserDto.*;
+import com.allin.teaming.user.dto.UserIdResponseDto;
 import com.allin.teaming.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -78,5 +79,11 @@ public class UserController {
             @RequestHeader("Authorization") String token) {
         userService.deleteUser(token);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/id")
+    public ResponseEntity<? extends BasicResponse> getUserIdByToken(
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(new DataResponse<>(userService.getUserIdByToken(token)));
     }
 }

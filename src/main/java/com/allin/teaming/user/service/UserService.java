@@ -4,6 +4,7 @@ import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto.*;
+import com.allin.teaming.user.dto.UserIdResponseDto;
 import com.allin.teaming.user.repository.SchoolRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -145,6 +146,14 @@ public class UserService {
 
     // 로그아웃
 
+    // userId 반환 함수
+    public UserIdResponseDto getUserIdByToken(String token) {
+        User user = findUserByToken(token);
+        return UserIdResponseDto.builder()
+                .username(user.getUsername())
+                .userId(user.getId())
+                .build();
+    }
 
 }
 
