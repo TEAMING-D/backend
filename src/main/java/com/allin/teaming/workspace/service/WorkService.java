@@ -179,14 +179,12 @@ public class WorkService {
     // 업무 삭제 (업무 자체를 삭제)
     @Transactional
     public void deleteWork(Long workspaceId, Long workId) {
-        // 1. 업무 ID로 모든 Assignment를 조회
-        List<Assignment> assignments = assignmentRepository.findByWorkId(workId);
 
+        List<Assignment> assignments = assignmentRepository.findByWorkId(workId);
         if (assignments.isEmpty()) {
             throw new IllegalArgumentException("No assignments found for workId: " + workId);
         }
 
-        // 2. 모든 Assignment에서 Membership을 통해 Workspace ID를 확인
         Long actualWorkspaceId = assignments.stream()
                 .findFirst()
                 .map(assignment -> membershipRepository.findById(assignment.getMembership().getId())
@@ -194,15 +192,11 @@ public class WorkService {
                         .getWorkspace().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Workspace not found for workId: " + workId));
 
-        // 3. 요청된 워크스페이스 아이디와 실제 워크스페이스 아이디가 일치하는지 확인
         if (!actualWorkspaceId.equals(workspaceId)) {
             throw new IllegalArgumentException("Workspace ID mismatch: expected " + actualWorkspaceId + " but got " + workspaceId);
         }
 
-        // 4. 해당 업무와 관련된 모든 Assignment 삭제
         assignmentRepository.deleteByWorkId(workId);
-
-        // 5. 업무 삭제
         workRepository.deleteById(workId);
     }
 
