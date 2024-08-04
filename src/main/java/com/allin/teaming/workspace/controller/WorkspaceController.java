@@ -1,5 +1,6 @@
 package com.allin.teaming.workspace.controller;
 
+import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.dto.WorkspaceCreateRequestDto;
 import com.allin.teaming.workspace.dto.WorkspaceDTO;
 import com.allin.teaming.workspace.dto.MembershipDTO;
@@ -20,44 +21,58 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
     private final WorkspaceCreateService workspaceCreateService;
 
+    // 모든 워크 스페이스 조회
     @GetMapping
     public List<WorkspaceResponseDto> getAllWorkspaces() {
         return workspaceService.getAllWorkspaces();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkspaceResponseDto> getWorkspaceById(@PathVariable Long id) {
+
+    // 아이디로 조회
+    @GetMapping("/{workspace_id}")
+    public ResponseEntity<WorkspaceResponseDto> getWorkspaceById(
+            @PathVariable Long id) {
         return ResponseEntity.ok(workspaceService.getWorkspaceById(id));
     }
 
+    // 워크스페이스 생성
     @PostMapping
     public ResponseEntity<WorkspaceResponseDto> createWorkspace(
             @RequestBody WorkspaceCreateRequestDto request,
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(workspaceCreateService.createWorkspace(token, request));
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<WorkspaceResponseDto> updateWorkspace(@PathVariable Long id, @RequestBody WorkspaceDTO workspaceDTO) {
-        return ResponseEntity.ok(workspaceService.updateWorkspace(id, workspaceDTO));
+    // 워크 스페이스 업데이트
+    @PutMapping("/{workspace_id}")
+    public ResponseEntity<WorkspaceResponseDto> updateWorkspace(
+            @PathVariable Long workspaceId,
+            @RequestBody WorkspaceDTO workspaceDTO) {
+        return ResponseEntity.ok(workspaceService.updateWorkspace(workspaceId, workspaceDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWorkspace(@PathVariable Long id) {
-        workspaceService.deleteWorkspace(id);
+    // 워크 스페이스 삭제
+    @DeleteMapping("/{workspace_id}")
+    public ResponseEntity<Void> deleteWorkspace(
+            @PathVariable Long workspaceId) {
+        workspaceService.deleteWorkspace(workspaceId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
-    public List<WorkspaceResponseDto> getAllWorkspacesByUserId(@RequestHeader("Authorization") String token) {
-        return workspaceService.getAllWorkspacesByUserId(token);
+    //사용자의모든 워크 스페이스 조회
+    @GetMapping("/user")
+    public List<WorkspaceResponseDto> getAllWorkspacesByUserId(
+            @RequestHeader("Authorization") String token) {
+        return workspaceService.getAllWorkspacesByUser(token);
     }
 
+    // 워크 스페이스의 모든 멤버 조회
     @GetMapping("/{workspaceId}/members")
-    public List<MembershipDTO> getAllMembersOfWorkspace(@PathVariable Long workspaceId) {
+    public List<MembershipDTO> getAllMembersOfWorkspace(
+            @PathVariable Long workspaceId) {
         return workspaceService.getAllMembersOfWorkspace(workspaceId);
     }
 
+    // 워크스페이스에 멤버 추가
     @PostMapping("/{workspaceId}/users/{userId}")
     public ResponseEntity<Void> addUserToWorkspace(
             @PathVariable Long workspaceId,
@@ -66,8 +81,19 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
+    // 워크스페이스에 여러 멤버를 한번에 추가
+    @PostMapping("/{workspaceId}/users")
+    public ResponseEntity<Void> addUsersToWorkspace(
+            @PathVariable Long workspaceId,
+            @RequestBody List<Long> userIds) {
+        workspaceService.addUsersToWorkspace(workspaceId, userIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 워크 스페이스에 멤버 삭제
     @DeleteMapping("/{workspaceId}/users/{userId}")
-    public ResponseEntity<Void> removeUserFromWorkspace(@PathVariable Long workspaceId, @PathVariable Long userId) {
+    public ResponseEntity<Void> removeUserFromWorkspace(
+            @PathVariable Long workspaceId, @PathVariable Long userId) {
         workspaceService.removeUserFromWorkspace(workspaceId, userId);
         return ResponseEntity.noContent().build();
     }
