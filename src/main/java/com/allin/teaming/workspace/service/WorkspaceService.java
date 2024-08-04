@@ -65,6 +65,7 @@ public class WorkspaceService {
     // Workspace 생성
     @Transactional
     public WorkspaceDTO createWorkspace(String token, WorkspaceDTO workspaceDTO) {
+
         User user = findUserByToken(token);
         Workspace workspace = convertToEntity(workspaceDTO);
         workspace.setCreated_date(LocalDate.now());

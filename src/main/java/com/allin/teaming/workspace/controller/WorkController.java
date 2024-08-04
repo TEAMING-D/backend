@@ -23,12 +23,12 @@ public class WorkController {
         return ResponseEntity.ok(createdWork);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{workId}")
     public ResponseEntity<WorkDTO> updateWork(
             @PathVariable Long workspaceId,
-            @PathVariable Long id,
+            @PathVariable Long workId,
             @RequestBody WorkDTO workDTO) {
-        WorkDTO updatedWork = workService.updateWork(workspaceId, id, workDTO);
+        WorkDTO updatedWork = workService.updateWork(workId, workspaceId, workDTO);
         return ResponseEntity.ok(updatedWork);
     }
 

@@ -14,4 +14,5 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     Optional<Assignment> findByWorkAndMembership(Work work, Membership membership);
     void deleteByWork(Work work);
     List<Assignment> findByWork(Work work);
+    boolean existsByWorkIdAndMembershipId(Long workId, Long membershipId);
 }

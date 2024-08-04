@@ -13,8 +13,10 @@ import java.util.List;
 @Repository
 public interface MembershipRepository extends JpaRepository<Membership, Long> {
     boolean existsByWorkspaceIdAndUserId(Long workspaceId, Long userId);
+    Optional<Membership> findByUserIdAndWorkspaceId(Long userId, Long workspaceId);
     Optional<Membership> findByUserAndWorkspace(User user, Workspace workspace);
     List<Membership> findAllByUser(User user);
+    Optional<Membership> findByUserId(Long userId);
     void deleteById(Long id);
 
     @Modifying

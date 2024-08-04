@@ -33,7 +33,7 @@ public class UserDto {
         private String schoolName;
         private String schoolNum;
 
-        @Email(message = "잘못된 이메일 형식입니다. ")
+        @Email(message = "잘못된 이메일 형식입니다.")
         private String email;
         private String major;
 
@@ -65,7 +65,6 @@ public class UserDto {
                     .collabTools(collabTools)
                     .build();
         }
-
     }
 
     @Builder
@@ -84,10 +83,9 @@ public class UserDto {
                     .schoolNum(user.getSchoolNum())
                     .build();
         }
-
     }
 
-    // 조회
+    // 사용자 상세 조회
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -120,7 +118,6 @@ public class UserDto {
         }
     }
 
-
     @Builder
     @Getter
     @NoArgsConstructor
@@ -142,14 +139,15 @@ public class UserDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class IdResponse{
+    public static class IdResponse {
         private Long id;
+
         public static IdResponse of(User user) {
             return new IdResponse(user.getId());
         }
     }
 
-    // 사용자 정보 수정
+    // 사용자 정보 수정 요청
     @Getter
     public static class UserModifyRequest {
         private String username;
@@ -166,6 +164,24 @@ public class UserDto {
         private String birth;
         private String sns;
         private String collabTools;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserAssignmentDto {
+        private Long userId;
+        private String username;
+        private Long workspaceId;
+
+        public static UserAssignmentDto of(User user, Long workspaceId) {
+            return UserAssignmentDto.builder()
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .workspaceId(workspaceId)
+                    .build();
+        }
     }
 
 }
