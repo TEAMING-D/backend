@@ -117,13 +117,39 @@ public class WorkService {
 
         Work updatedWork = workRepository.save(work);
 
-        // 기존 Assignment 삭제
-        assignmentRepository.deleteByWork(updatedWork);
+        // 현재 할당된 유저의 ID 목록 가져오기
+        List<Long> currentUserIds = assignmentRepository.findByWork(updatedWork).stream()
+                .map(assignment -> assignment.getMembership().getUser().getId())
+                .collect(Collectors.toList());
 
         // 새로 할당할 유저 정보 저장
-        for (Long userId : workDTO.getAssignedUserIds()) {
-            Membership membership = membershipRepository.findByUserId(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userId));
+        List<Long> newUserIds = workDTO.getAssignedUserIds();
+
+        // 추가할 유저 찾기
+        List<Long> usersToAdd = newUserIds.stream()
+                .filter(userId -> !currentUserIds.contains(userId))
+                .collect(Collectors.toList());
+
+        // 삭제할 유저 찾기
+        List<Long> usersToRemove = currentUserIds.stream()
+                .filter(userId -> !newUserIds.contains(userId))
+                .collect(Collectors.toList());
+
+        // 기존 Assignment 삭제 (삭제할 유저에 대한 Assignment)
+        for (Long userIdToRemove : usersToRemove) {
+            Membership membership = membershipRepository.findByUserIdAndWorkspaceId(userIdToRemove, workspaceId)
+                    .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userIdToRemove + " in workspace: " + workspaceId));
+
+            Assignment assignment = assignmentRepository.findByWorkAndMembership(updatedWork, membership)
+                    .orElseThrow(() -> new EntityNotFoundException("Assignment not found for userId: " + userIdToRemove + " in workspace: " + workspaceId));
+
+            assignmentRepository.delete(assignment);
+        }
+
+        // 새로 할당할 Assignment 저장
+        for (Long userIdToAdd : usersToAdd) {
+            Membership membership = membershipRepository.findByUserIdAndWorkspaceId(userIdToAdd, workspaceId)
+                    .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userIdToAdd + " in workspace: " + workspaceId));
 
             Assignment assignment = new Assignment();
             assignment.setWork(updatedWork);
@@ -136,8 +162,8 @@ public class WorkService {
         // 응답 DTO 생성
         List<UserDto.UserAssignmentDto> assignedUsers = workDTO.getAssignedUserIds().stream()
                 .map(userId -> {
-                    Membership membership = membershipRepository.findByUserId(userId)
-                            .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userId));
+                    Membership membership = membershipRepository.findByUserIdAndWorkspaceId(userId, workspaceId)
+                            .orElseThrow(() -> new IllegalArgumentException("Membership not found for userId: " + userId + " in workspace: " + workspaceId));
                     return UserDto.UserAssignmentDto.of(membership.getUser(), workspaceId);
                 }).collect(Collectors.toList());
 
@@ -153,11 +179,31 @@ public class WorkService {
     // 업무 삭제 (업무 자체를 삭제)
     @Transactional
     public void deleteWork(Long workspaceId, Long workId) {
-        Work work = workRepository.findByIdAndWorkspaceId(workId, workspaceId)
-                .orElseThrow(() -> new EntityNotFoundException("Work not found with id " + workId + " in workspace " + workspaceId));
+        // 1. 업무 ID로 모든 Assignment를 조회
+        List<Assignment> assignments = assignmentRepository.findByWorkId(workId);
 
-        assignmentRepository.deleteByWork(work);
-        workRepository.delete(work);
+        if (assignments.isEmpty()) {
+            throw new IllegalArgumentException("No assignments found for workId: " + workId);
+        }
+
+        // 2. 모든 Assignment에서 Membership을 통해 Workspace ID를 확인
+        Long actualWorkspaceId = assignments.stream()
+                .findFirst()
+                .map(assignment -> membershipRepository.findById(assignment.getMembership().getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Membership not found with id: " + assignment.getMembership().getId()))
+                        .getWorkspace().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found for workId: " + workId));
+
+        // 3. 요청된 워크스페이스 아이디와 실제 워크스페이스 아이디가 일치하는지 확인
+        if (!actualWorkspaceId.equals(workspaceId)) {
+            throw new IllegalArgumentException("Workspace ID mismatch: expected " + actualWorkspaceId + " but got " + workspaceId);
+        }
+
+        // 4. 해당 업무와 관련된 모든 Assignment 삭제
+        assignmentRepository.deleteByWorkId(workId);
+
+        // 5. 업무 삭제
+        workRepository.deleteById(workId);
     }
 
     // 워크스페이스 내의 모든 업무 조회

@@ -32,11 +32,11 @@ public class WorkController {
         return ResponseEntity.ok(updatedWork);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{workId}")
     public ResponseEntity<Void> deleteWork(
             @PathVariable Long workspaceId,
-            @PathVariable Long id) {
-        workService.deleteWork(workspaceId, id);
+            @PathVariable Long workId) {
+        workService.deleteWork(workspaceId, workId);
         return ResponseEntity.noContent().build();
     }
 
