@@ -68,13 +68,13 @@ public class MeetingDto {
 
     @Getter
     static public class MeetingTitleModifyDto {
-        private Long id;
+        private Long meetingId;
         private String title;
     }
 
     @Getter
     static public class MeetingTimeModifyDto {
-        private Long id;
+        private Long meetingId;
         private Week week;
         private LocalTime start_time;
         private LocalTime end_time;
@@ -82,8 +82,8 @@ public class MeetingDto {
 
     @Getter
     static public class WorkspaceAndUser {
-        private Long workspace_id;
-        private Long user_id;
+        private Long workspaceId;
+        private Long userId;
     }
 
 

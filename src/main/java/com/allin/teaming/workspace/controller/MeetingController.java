@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,8 +46,8 @@ public class MeetingController {
     // 해당 유저의 workspace의 회의 전체 조회
     @GetMapping("/user")
     public ResponseEntity<? extends BasicResponse> getAllMeetingByUserId(
-            @RequestBody WorkspaceAndUser workspaceAndUser) {
-        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(workspaceAndUser)));
+            @RequestBody WorkspaceAndUser request) {
+        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(request)));
     }
 
     // 나의 특정 workspace의 모든 회의 조회
@@ -94,7 +95,7 @@ public class MeetingController {
     }
 
     // 회의 참여자들 추가
-    @PutMapping("/add/participant")
+    @PutMapping("/add/participants")
     public ResponseEntity<? extends BasicResponse> addParticipant(
             @RequestBody MeetingAddParticipantDto request) {
         return ResponseEntity.ok(new DataResponse<>(meetingService.addParticipant(request)));

@@ -79,39 +79,51 @@ public class MeetingService {
 
     // userId와 Workspace_id로 전체 조회
     @Transactional(readOnly = true)
-    public List<MeetingDetailDto> getAllMeetingByUserId(WorkspaceAndUser request) {
-        User user = findUserById(request.getUser_id());
-        Workspace workspace = workspaceRepository.findById(request.getWorkspace_id())
+    public Optional<List<MeetingDetailDto>> getAllMeetingByUserId(WorkspaceAndUser request) {
+        // 워크 스페이스와 user 찾기
+        User user = findUserById(request.getUserId());
+        Workspace workspace = workspaceRepository.findById(request.getWorkspaceId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 워크 스페이스가 존재하지 않습니다. "));
 
+        // 워크 스페이스의 모든 미팅 찾기
         List<Meeting> meetings = meetingRepository.findByWorkspace(workspace);
-        List<Meeting> userMeeting = new ArrayList<>();
-        for (Meeting meeting : meetings) {
-            if (meetingParticipantRepository.existsByUserAndMeeting(user, meeting)) {
-                userMeeting.add(meeting);
-            }
+        if (meetings.isEmpty()) {
+            return Optional.empty();
         }
 
-        return userMeeting.stream().map(MeetingDetailDto::of).toList();
+        // 미팅 중에 유저가 참여하는 미팅만 남기기
+        List<Meeting> userMeeting = meetings.stream()
+                .filter(m -> meetingParticipantRepository.existsByUserAndMeeting(user, m))
+                .toList();
+
+        if (userMeeting.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(userMeeting.stream().map(MeetingDetailDto::of).toList());
+        }
     }
 
     // workspace 내의 나의 모든 회의 조회
-    public List<MeetingDetailDto> getMyMeetingByWorkspaceId(String token, Long workspaceId) {
+    public Optional<List<MeetingDetailDto>> getMyMeetingByWorkspaceId(String token, Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 워크 스페이스를 조회할 수 없습니다."));
         User user = findUserByToken(token);
 
         // workspace의 모든 미팅 조회
         List<Meeting> meetings = meetingRepository.findByWorkspace(workspace);
+        if (meetings.isEmpty()) {
+            return Optional.empty();
+        }
 
         // 모든 미팅 중 내가 참여한 미팅만 거르기
-        List<Meeting> myMeetings = new ArrayList<>();
-        for (Meeting meeting : meetings) {
-            if (meetingParticipantRepository.existsByUserAndMeeting(user, meeting)) {
-                myMeetings.add(meeting);
-            }
+        List<Meeting> myMeetings = meetings.stream()
+                .filter(m -> meetingParticipantRepository.existsByUserAndMeeting(user, m))
+                .toList();
+        if (myMeetings.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(myMeetings.stream().map(MeetingDetailDto::of).toList());
         }
-        return myMeetings.stream().map(MeetingDetailDto::of).toList();
     }
 
     // TODO : 모든 조합으로 다 도출하기
@@ -213,14 +225,13 @@ public class MeetingService {
         }
 
         meetingParticipantRepository.saveAll(initParticipants);
-        System.out.println("여기까진 되나??");
         return MeetingDetailDto.toDtoWithParticipants(savedMeeting, initParticipants);
     }
 
     // 회의 시간 수정
     @Transactional
     public MeetingDetailDto modifyMeetingTime(MeetingTimeModifyDto request) {
-        Meeting meeting = findMeetingByIdMeetingById(request.getId());
+        Meeting meeting = findMeetingByIdMeetingById(request.getMeetingId());
         meeting.updateTime(request.getWeek(), request.getStart_time(), request.getEnd_time());
         return MeetingDetailDto.of(meeting);
     }
@@ -228,7 +239,7 @@ public class MeetingService {
     // 이름 수정
     @Transactional
     public MeetingDetailDto modifyMeetingTitle(MeetingTitleModifyDto request) {
-        Meeting meeting = findMeetingByIdMeetingById(request.getId());
+        Meeting meeting = findMeetingByIdMeetingById(request.getMeetingId());
         meeting.updateTitle(request.getTitle());
         return MeetingDetailDto.of(meeting);
     }
@@ -267,20 +278,23 @@ public class MeetingService {
         final String PARTICIPANT_NOT_FOUND_MESSAGE = "해당 참여원을 찾을 수 없습니다. userId = ";
 
         Meeting meeting = findMeetingByIdMeetingById(request.getMeetingId());
+        List<MeetingParticipant> remainParticipants = meetingParticipantRepository.findByMeeting(meeting);
 
         /*
         삭제해달라고 요청받은 모든 멤버들을 찾고
          */
         List<MeetingParticipant> participantsToDelete = new ArrayList<>();
         for (Long userId : request.getUserIds()){
-            participantsToDelete.add(meetingParticipantRepository.findByMeetingAndUser(meeting, findUserById(userId))
-                    .orElseThrow(() -> new IllegalArgumentException(PARTICIPANT_NOT_FOUND_MESSAGE + userId)));
+            MeetingParticipant meetingParticipant = meetingParticipantRepository.findByMeetingAndUser(meeting, findUserById(userId))
+                    .orElseThrow(() -> new IllegalArgumentException(PARTICIPANT_NOT_FOUND_MESSAGE + userId));
+            participantsToDelete.add(meetingParticipant);
+            remainParticipants.remove(meetingParticipant);
         }
 
         // 참여자 삭제
         meetingParticipantRepository.deleteAll(participantsToDelete);
 
-        return MeetingDetailDto.of(meeting);
+        return MeetingDetailDto.toDtoWithParticipants(meeting, remainParticipants);
     }
 
 

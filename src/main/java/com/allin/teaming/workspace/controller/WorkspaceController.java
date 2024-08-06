@@ -87,13 +87,10 @@ public class WorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
-    // TODO : 멤버들의 시간표 모두 조회
+    // 워크스페이스 멤버들의 시간표 모두 조회
     @GetMapping("/schedule/{workspace_id}")
     public ResponseEntity<? extends BasicResponse> getAllScheduleInWorkspace(
             @PathVariable("workspace_id") Long workspace_id) {
         return ResponseEntity.ok(new DataResponse<>(workspaceService.getAllScheduleInWorkspace(workspace_id)));
     }
-
-
-
 }

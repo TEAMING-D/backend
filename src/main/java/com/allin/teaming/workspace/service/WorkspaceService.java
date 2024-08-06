@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -210,17 +211,20 @@ public class WorkspaceService {
         workspace.setCreated_date(workspaceDTO.getCreatedDate());
     }
 
-    // TODO : 멤버들의 시간표 모두 조회 테스트 해야함
+    // 멤버들의 시간표 모두 조회
     @Transactional(readOnly = true)
-    public List<ScheduleDetailDto> getAllScheduleInWorkspace(Long workspaceId) {
+    public Optional<List<ScheduleDetailDto>> getAllScheduleInWorkspace(Long workspaceId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         List<User> members = workspace.getMembers().stream().map(Membership::getUser).toList();
-        return members.stream()
-                .map(User::getSchedule)
-                .map(ScheduleDetailDto::of)
-                .toList();
+        if (members.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(members.stream()
+                    .map(User::getSchedule)
+                    .map(ScheduleDetailDto::of)
+                    .toList());
+        }
     }
-
 
     // 초기 팀원 추가 메서드
     private void addInitialMembers(Workspace workspace, List<Long> initialMemberIds) {

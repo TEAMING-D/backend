@@ -29,6 +29,10 @@ public class Meeting {
 
     private String title;
 
+    /*
+     TODO : 날짜 형식 바꾸기
+     시간 -> 날짜로!!
+     */
     @Enumerated(EnumType.STRING)
     private Week week;
 
