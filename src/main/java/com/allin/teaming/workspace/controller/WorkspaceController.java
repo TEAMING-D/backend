@@ -1,10 +1,9 @@
 package com.allin.teaming.workspace.controller;
 
+import com.allin.teaming.Response.BasicResponse;
+import com.allin.teaming.Response.DataResponse;
 import com.allin.teaming.user.domain.User;
-import com.allin.teaming.workspace.dto.WorkspaceCreateRequestDto;
-import com.allin.teaming.workspace.dto.WorkspaceDTO;
-import com.allin.teaming.workspace.dto.MembershipDTO;
-import com.allin.teaming.workspace.dto.WorkspaceResponseDto;
+import com.allin.teaming.workspace.dto.*;
 import com.allin.teaming.workspace.service.WorkspaceCreateService;
 import com.allin.teaming.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
@@ -42,12 +41,12 @@ public class WorkspaceController {
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(workspaceCreateService.createWorkspace(token, request));
     }
-    // 워크 스페이스 업데이트
-    @PutMapping("/{workspace_id}")
+
+    // 워크 스페이스 수정
+    @PutMapping
     public ResponseEntity<WorkspaceResponseDto> updateWorkspace(
-            @PathVariable Long workspaceId,
-            @RequestBody WorkspaceDTO workspaceDTO) {
-        return ResponseEntity.ok(workspaceService.updateWorkspace(workspaceId, workspaceDTO));
+            @RequestBody WorkspaceDTO request) {
+        return ResponseEntity.ok(workspaceService.updateWorkspace(request));
     }
 
     // 워크 스페이스 삭제
@@ -74,11 +73,10 @@ public class WorkspaceController {
 
     // 워크스페이스에 멤버 추가
     @PostMapping("/{workspaceId}/users/{userId}")
-    public ResponseEntity<Void> addUserToWorkspace(
-            @PathVariable Long workspaceId,
-            @PathVariable Long userId) {
-        workspaceService.addUserToWorkspace(workspaceId, userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<WorkspaceResponseDto> addUserToWorkspace(
+            @PathVariable("workspaceId") Long workspaceId,
+            @PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(workspaceService.addUserToWorkspace(workspaceId, userId));
     }
 
     // 워크 스페이스에 멤버 삭제
@@ -88,4 +86,14 @@ public class WorkspaceController {
         workspaceService.removeUserFromWorkspace(workspaceId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    // TODO : 멤버들의 시간표 모두 조회
+    @GetMapping("/schedule/{workspace_id}")
+    public ResponseEntity<? extends BasicResponse> getAllScheduleInWorkspace(
+            @PathVariable("workspace_id") Long workspace_id) {
+        return ResponseEntity.ok(new DataResponse<>(workspaceService.getAllScheduleInWorkspace(workspace_id)));
+    }
+
+
+
 }

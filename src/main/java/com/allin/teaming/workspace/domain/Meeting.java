@@ -38,10 +38,11 @@ public class Meeting {
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
 
-    private boolean complete;
+    @Builder.Default
+    private boolean complete = false;
 
     public Meeting complete() {
-        this.complete = false;
+        this.complete = true;
         return this;
     }
 

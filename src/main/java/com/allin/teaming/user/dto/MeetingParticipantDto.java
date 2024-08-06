@@ -34,7 +34,7 @@ public class MeetingParticipantDto {
     @Getter
     public static class MeetingParticipantDeleteDto {
         private Long meetingId;
-        private List<Long> participantsId;
+        private List<Long> userIds;
     }
 
     @Getter

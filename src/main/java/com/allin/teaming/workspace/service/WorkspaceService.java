@@ -1,5 +1,7 @@
 package com.allin.teaming.workspace.service;
 
+import com.allin.teaming.shedule.domain.Schedule;
+import com.allin.teaming.shedule.dto.ScheduleDto.*;
 import com.allin.teaming.user.Jwt.JwtUtil;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.workspace.domain.Workspace;
@@ -90,8 +92,8 @@ public class WorkspaceService {
 
     // 워크스페이스 수정
     @Transactional
-    public WorkspaceResponseDto updateWorkspace(Long id, WorkspaceDTO workspaceDTO) {
-        Workspace existingWorkspace = findWorkspaceById(id);
+    public WorkspaceResponseDto updateWorkspace(WorkspaceDTO workspaceDTO) {
+        Workspace existingWorkspace = findWorkspaceById(workspaceDTO.getWorkspaceId());
         updateEntityFromDTO(workspaceDTO, existingWorkspace);
 
         // 기존 멤버 제거
@@ -117,13 +119,18 @@ public class WorkspaceService {
 
     // 워크스페이스에 유저 추가
     @Transactional
-    public void addUserToWorkspace(Long workspaceId, Long userId) {
+    public WorkspaceResponseDto addUserToWorkspace(Long workspaceId, Long userId) {
         Workspace workspace = findWorkspaceById(workspaceId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
+        if (membershipRepository.existsByWorkspaceIdAndUserId(workspaceId, userId)) {
+            throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+        }
         Membership membership = new Membership(user, workspace);
         membershipRepository.save(membership);
+        List<MembershipDTO> members = getAllMembersOfWorkspace(workspace.getId());
+        return WorkspaceResponseDto.toDto(workspace, members);
     }
 
     // 워크스페이스에서 유저 제거
@@ -139,7 +146,7 @@ public class WorkspaceService {
         membershipRepository.delete(membership);
     }
 
-    // 주어진 userId로 모든 Workspace 조회
+    // 나의 모든 Workspace 조회
     @Transactional(readOnly = true)
     public List<WorkspaceResponseDto> getAllWorkspacesByUserId(String token) {
         User user = findUserByToken(token);
@@ -172,7 +179,7 @@ public class WorkspaceService {
                 .collect(Collectors.toList());
 
         WorkspaceDTO dto = new WorkspaceDTO();
-        dto.setId(workspace.getId());
+        dto.setWorkspaceId((workspace.getId()));
         dto.setName(workspace.getName());
         dto.setDescription(workspace.getDescription());
         dto.setType(workspace.getType());
@@ -185,7 +192,7 @@ public class WorkspaceService {
     // WorkspaceDTO를 Workspace 엔티티로 변환하는 메서드
     private Workspace convertToEntity(WorkspaceDTO workspaceDTO) {
         Workspace workspace = new Workspace();
-        workspace.setId(workspaceDTO.getId());
+        workspace.setId(workspaceDTO.getWorkspaceId());
         workspace.setName(workspaceDTO.getName());
         workspace.setDescription(workspaceDTO.getDescription());
         workspace.setType(workspaceDTO.getType());
@@ -203,8 +210,16 @@ public class WorkspaceService {
         workspace.setCreated_date(workspaceDTO.getCreatedDate());
     }
 
-    // TODO : 멤버들의 시간표 모두 조회
-    // TODO : 특정 유저의 시간표 조회
+    // TODO : 멤버들의 시간표 모두 조회 테스트 해야함
+    @Transactional(readOnly = true)
+    public List<ScheduleDetailDto> getAllScheduleInWorkspace(Long workspaceId) {
+        Workspace workspace = findWorkspaceById(workspaceId);
+        List<User> members = workspace.getMembers().stream().map(Membership::getUser).toList();
+        return members.stream()
+                .map(User::getSchedule)
+                .map(ScheduleDetailDto::of)
+                .toList();
+    }
 
 
     // 초기 팀원 추가 메서드
