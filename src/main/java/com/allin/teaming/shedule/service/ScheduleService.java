@@ -32,8 +32,8 @@ public class ScheduleService {
 
     // id로 조회
     @Transactional(readOnly = true)
-    public ScheduleDetailDto getScheduleById(Long id) {
-        return ScheduleDetailDto.of(findScheduleById(id));
+    public ScheduleDetailDto getScheduleById(Long scheduleId) {
+        return ScheduleDetailDto.of(findScheduleById(scheduleId));
     }
 
     // 내 시간표 조회
@@ -45,6 +45,8 @@ public class ScheduleService {
         } else throw new IllegalArgumentException("아직 시간표를 생성하지 않았습니다. ");
     }
 
+
+    // UserId로 스케줄 조회
     @Transactional(readOnly = true)
     public ScheduleDetailDto getScheduleByUserId(Long userId) {
         User user = userRepository.findById(userId)
@@ -69,8 +71,11 @@ public class ScheduleService {
 
     // schedule 수정
     @Transactional
-    public IdResponse modifySchedule(ScheduleModifyDto request) {
-        Schedule schedule = findScheduleById(request.getScheduleId());
+    public IdResponse modifySchedule(String token, ScheduleModifyDto request) {
+        User user = findUserByToken(token);
+//        Schedule schedule = findScheduleById(request.getScheduleId());
+        Schedule schedule = scheduleRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저의 스케줄을 찾을 수 없습니다. "));
         schedule.update(request.getTitle());
         return IdResponse.of(schedule);
     }

@@ -33,14 +33,14 @@ public class EventController {
         return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByScheduleId(scheduleId)));
     }
 
-    // user id로 전체 조회
+    // 나의 일정 전체 조회
     @GetMapping
     public ResponseEntity<? extends BasicResponse> getAllEventByUserID(
             @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(new DataResponse<>(eventService.getAllEventByUser(token)));
     }
 
-    // event 생성
+    // event 생성 -> 스케줄에 추가
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> createEvent(
             @RequestHeader("Authorization") String token,

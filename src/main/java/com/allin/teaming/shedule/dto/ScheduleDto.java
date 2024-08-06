@@ -52,9 +52,9 @@ public class ScheduleDto {
         }
     }
 
+
     @Getter
     static public class ScheduleModifyDto {
-        private Long scheduleId;
         private String title;
     }
 

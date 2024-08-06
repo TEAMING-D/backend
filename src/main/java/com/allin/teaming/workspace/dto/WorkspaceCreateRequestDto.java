@@ -1,6 +1,7 @@
 package com.allin.teaming.workspace.dto;
 
 import com.allin.teaming.workspace.domain.Workspace;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,9 +14,8 @@ public class WorkspaceCreateRequestDto {
     private String name;
     private String description;
     private String type; // 예: 수업, 대회, 동아리, 기타
-
+    @JsonFormat(pattern = "YYYY-MM-dd")
     private LocalDate deadline;
-    private LocalDate created_date;
     private List<Long> members;
 
     public Workspace toEntity() {

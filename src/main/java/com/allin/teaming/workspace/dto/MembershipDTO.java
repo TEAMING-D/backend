@@ -15,10 +15,6 @@ public class MembershipDTO {
     private String username;      //사용자 이름
     private Long workspaceId;   // 워크스페이스 ID
 
-    // 기본 생성자
-    public MembershipDTO() {
-    }
-
     public static MembershipDTO toDto(Membership membership) {
         return MembershipDTO.builder()
                 .id(membership.getId())

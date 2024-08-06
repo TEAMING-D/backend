@@ -3,6 +3,8 @@ package com.allin.teaming.workspace.controller;
 import com.allin.teaming.Response.BasicResponse;
 import com.allin.teaming.Response.DataResponse;
 import com.allin.teaming.user.dto.MeetingParticipantDto.*;
+import com.allin.teaming.workspace.dto.MeetingAddParticipantDto;
+import com.allin.teaming.workspace.dto.MeetingCreateRequestDto;
 import com.allin.teaming.workspace.dto.MeetingDto.*;
 import com.allin.teaming.workspace.service.MeetingService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,18 +35,27 @@ public class MeetingController {
         return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByWorkspaceId(id)));
     }
 
-    // user id 로 전체 조회
-    @GetMapping("/user")
-    public ResponseEntity<? extends BasicResponse> getAllMeetingByUserId(
-            @RequestBody WorkspaceAndUser workspaceAndUser) {
-        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(workspaceAndUser)));
-    }
-
     // Title로 전체 조회
+    // todo : 중복 제거?
     @GetMapping("/title/{title}")
     public ResponseEntity<? extends BasicResponse> getMeetingByTitle(
             @PathVariable("title") String title) {
         return ResponseEntity.ok(new DataResponse<>(meetingService.getMeetingByTitle(title)));
+    }
+
+    // 해당 유저의 workspace의 회의 전체 조회
+    @GetMapping("/user")
+    public ResponseEntity<? extends BasicResponse> getAllMeetingByUserId(
+            @RequestBody WorkspaceAndUser request) {
+        return ResponseEntity.ok(new DataResponse<>(meetingService.getAllMeetingByUserId(request)));
+    }
+
+    // 나의 특정 workspace의 모든 회의 조회
+    @GetMapping("/my/workspace/{workspace_id}")
+    public ResponseEntity<? extends BasicResponse> getMyMeetingByWorkspaceId(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("workspace_id") Long workspaceId) {
+        return ResponseEntity.ok(new DataResponse<>(meetingService.getMyMeetingByWorkspaceId(token, workspaceId)));
     }
 
     // user의 id들을 받아서 가능한 회의 시간 전체 조회
@@ -57,7 +69,7 @@ public class MeetingController {
     // 회의 생성
     @PostMapping
     public ResponseEntity<? extends BasicResponse> createMeeting(
-            @RequestBody MeetingCreateDto request) {
+            @RequestBody MeetingCreateRequestDto request) {
         return ResponseEntity.ok(new DataResponse<>(meetingService.createMeeting(request)));
     }
 
@@ -82,12 +94,11 @@ public class MeetingController {
         return ResponseEntity.ok(new DataResponse<>(meetingService.completeMeeting(id)));
     }
 
-    // 회의 삭제
-    @DeleteMapping("/delete/{meeting_id}")
-    public ResponseEntity<? extends BasicResponse> deleteMeeting(
-            @PathVariable("meeting_id") Long meetingId){
-        meetingService.deleteMeeting(meetingId);
-        return ResponseEntity.noContent().build();
+    // 회의 참여자들 추가
+    @PutMapping("/add/participants")
+    public ResponseEntity<? extends BasicResponse> addParticipant(
+            @RequestBody MeetingAddParticipantDto request) {
+        return ResponseEntity.ok(new DataResponse<>(meetingService.addParticipant(request)));
     }
 
 
@@ -95,7 +106,14 @@ public class MeetingController {
     @DeleteMapping("/delete/participants")
     public ResponseEntity<? extends BasicResponse> deleteParticipant(
             @RequestBody MeetingParticipantDeleteDto request) {
-        meetingService.deleteParticipants(request);
+        return ResponseEntity.ok(new DataResponse<>(meetingService.deleteParticipants(request)));
+    }
+
+    // 회의 삭제
+    @DeleteMapping("/delete/{meeting_id}")
+    public ResponseEntity<? extends BasicResponse> deleteMeeting(
+            @PathVariable("meeting_id") Long meetingId){
+        meetingService.deleteMeeting(meetingId);
         return ResponseEntity.noContent().build();
     }
 }

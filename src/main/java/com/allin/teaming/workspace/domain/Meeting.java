@@ -29,6 +29,10 @@ public class Meeting {
 
     private String title;
 
+    /*
+     TODO : 날짜 형식 바꾸기
+     시간 -> 날짜로!!
+     */
     @Enumerated(EnumType.STRING)
     private Week week;
 
@@ -38,10 +42,11 @@ public class Meeting {
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeetingParticipant> meetingParticipants = new ArrayList<>();
 
-    private boolean complete;
+    @Builder.Default
+    private boolean complete = false;
 
     public Meeting complete() {
-        this.complete = false;
+        this.complete = true;
         return this;
     }
 

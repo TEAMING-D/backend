@@ -23,7 +23,7 @@ public class ScheduleController {
         return ResponseEntity.ok(new DataResponse<>(scheduleService.getScheduleById(scheduleId)));
     }
 
-    // userId로 조회
+    // 내 시간표 조회
     @GetMapping
     public ResponseEntity<? extends BasicResponse> getSchedule(
             @RequestHeader("Authorization") String token) {
@@ -48,8 +48,9 @@ public class ScheduleController {
     // schedule 수정
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends BasicResponse> modifySchedule(
+            @RequestHeader("Authorization") String token,
             @RequestBody ScheduleModifyDto request) {
-        return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(request)));
+        return ResponseEntity.ok(new DataResponse<>(scheduleService.modifySchedule(token, request)));
     }
 
 

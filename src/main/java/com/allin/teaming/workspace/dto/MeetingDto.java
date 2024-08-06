@@ -48,49 +48,33 @@ public class MeetingDto {
                     .build();
         }
 
-    }
-
-    @Getter
-    static public class MeetingCreateDto {
-        private Long workspaceId;
-        private String title;
-        private Week week;
-        private LocalTime start_time;
-        private LocalTime end_time;
-        private List<Long> userIds = new ArrayList<>();
-        public Meeting toMeeting(Workspace workspace, List<MeetingParticipant> participants) {
-            return Meeting.builder()
-                    .workspace(workspace)
-                    .title(title)
-                    .week(week)
-                    .start_time(start_time)
-                    .end_time(end_time)
-                    .complete(false)
-                    .meetingParticipants(participants)
+        public static MeetingDetailDto toDtoWithParticipants(Meeting meeting, List<MeetingParticipant> participants) {
+            return MeetingDetailDto.builder()
+                    .id(meeting.getId())
+                    .workspaceId(meeting.getWorkspace().getId())
+                    .title(meeting.getTitle())
+                    .complete(meeting.isComplete())
+                    .week(meeting.getWeek())
+                    .start_time(meeting.getStart_time())
+                    .end_time(meeting.getEnd_time())
+                    .users(participants.stream()
+                            .map(MeetingParticipant::getUser)
+                            .map(UserSimpleDto::of)
+                            .toList())
                     .build();
         }
 
     }
 
-    @Builder
-    @Getter
-    static public class AvailableMeetingTime {
-        private LocalTime start_time;
-        private LocalTime end_time;
-        private Week week;
-        private List<Long> userIds;
-        private List<UserScheduleDto> userScheduleDtos = new ArrayList<>();
-    }
-
     @Getter
     static public class MeetingTitleModifyDto {
-        private Long id;
+        private Long meetingId;
         private String title;
     }
 
     @Getter
     static public class MeetingTimeModifyDto {
-        private Long id;
+        private Long meetingId;
         private Week week;
         private LocalTime start_time;
         private LocalTime end_time;
@@ -98,8 +82,8 @@ public class MeetingDto {
 
     @Getter
     static public class WorkspaceAndUser {
-        private Long workspace_id;
-        private Long user_id;
+        private Long workspaceId;
+        private Long userId;
     }
 
 
