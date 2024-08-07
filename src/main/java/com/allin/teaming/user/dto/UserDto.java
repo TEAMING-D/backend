@@ -100,6 +100,10 @@ public class UserDto {
         private String major;
         private String birth;
         private String sns;
+
+        private String gitId;
+        private String notionMail;
+        private String plusMail;
         private String collabTools;
 
         public static UserDetailDto of(User user) {
@@ -113,9 +117,13 @@ public class UserDto {
                     .major(user.getMajor())
                     .birth(user.getBirth())
                     .sns(user.getSns())
+                    .gitId(user.getGitId())
+                    .notionMail(user.getNotionMail())
+                    .plusMail(user.getPlusMail())
                     .collabTools(user.getCollabTools())
                     .build();
         }
+
     }
 
     @Builder
