@@ -1,5 +1,6 @@
 package com.allin.teaming.user.domain;
 
+import com.allin.teaming.Archive.domain.Material;
 import com.allin.teaming.shedule.domain.Schedule;
 import com.allin.teaming.workspace.domain.Work;
 import jakarta.persistence.*;
@@ -64,8 +65,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Work> works = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Material> materials = new ArrayList<>();
+
+
     // 학교
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;
 

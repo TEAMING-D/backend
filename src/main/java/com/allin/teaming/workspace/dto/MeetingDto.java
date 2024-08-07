@@ -4,6 +4,7 @@ package com.allin.teaming.workspace.dto;
 import com.allin.teaming.shedule.domain.Week;
 import com.allin.teaming.user.domain.MeetingParticipant;
 import com.allin.teaming.user.dto.UserDto.*;
+import com.allin.teaming.user.dto.UserSimpleDto;
 import com.allin.teaming.workspace.domain.Meeting;
 import com.allin.teaming.workspace.domain.Workspace;
 import lombok.AllArgsConstructor;

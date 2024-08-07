@@ -5,6 +5,7 @@ import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto.*;
 import com.allin.teaming.user.dto.UserIdResponseDto;
+import com.allin.teaming.user.dto.UserSimpleDto;
 import com.allin.teaming.user.repository.SchoolRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
