@@ -63,9 +63,11 @@ public class ScheduleService {
         Schedule schedule = request.toEntity(user);
         scheduleRepository.save(schedule);
 
-        request.getEvents().forEach((event) -> {
-            eventRepository.save(event.toEvent(schedule));
-        });
+        if (!request.getEvents().isEmpty()) {
+            request.getEvents().forEach((event) -> {
+                eventRepository.save(event.toEvent(schedule));
+            });
+        }
         return IdResponse.of(schedule);
     }
 
