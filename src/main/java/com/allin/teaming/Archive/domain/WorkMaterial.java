@@ -4,12 +4,14 @@ import com.allin.teaming.workspace.domain.Work;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class WorkMaterial {
     @Id
     @Column(name = "work-material-id")

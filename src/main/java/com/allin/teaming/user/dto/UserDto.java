@@ -79,6 +79,7 @@ public class UserDto {
         private String info;
         private String schoolName;
         private String schoolNum;
+        private String phone;
         private String major;
         private String birth;
         private String sns;
@@ -96,6 +97,7 @@ public class UserDto {
                     .info(user.getInfo())
                     .schoolName(user.getSchool().getName())
                     .schoolNum(user.getSchoolNum())
+                    .phone(user.getPhone())
                     .major(user.getMajor())
                     .birth(user.getBirth())
                     .sns(user.getSns())

@@ -55,10 +55,10 @@ public class ScheduleController {
 
 
     // schedule 삭제
-    @DeleteMapping("/{schedule_id}")
+    @DeleteMapping
     public ResponseEntity<? extends BasicResponse> deleteSchedule(
-            @PathVariable("schedule_id") Long scheduleId) {
-        scheduleService.deleteSchedule(scheduleId);
+            @RequestHeader("Authorization") String token) {
+        scheduleService.deleteSchedule(token);
         return ResponseEntity.noContent().build();
     }
 }

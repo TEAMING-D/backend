@@ -86,7 +86,11 @@ public class ScheduleService {
 
     // schedule 삭제
     @Transactional
-    public void deleteSchedule(Long id) {
-        scheduleRepository.delete(findScheduleById(id));
+    public void deleteSchedule(String token) {
+        User user = findUserByToken(token);
+        Schedule schedule = scheduleRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("유저의 스케줄을 찾을 수 없습니다. "));
+
+        scheduleRepository.delete(schedule);
     }
 }

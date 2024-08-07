@@ -3,7 +3,8 @@ package com.allin.teaming.Archive.service;
 import com.allin.teaming.Archive.domain.Material;
 import com.allin.teaming.Archive.domain.WorkMaterial;
 import com.allin.teaming.Archive.dto.MaterialCreateRequestDto;
-import com.allin.teaming.Archive.dto.MaterialSimpleResponseDto;
+import com.allin.teaming.Archive.dto.MaterialCreateResponseDto;
+import com.allin.teaming.Archive.dto.MaterialResponseDto;
 import com.allin.teaming.Archive.repository.MaterialRepository;
 import com.allin.teaming.Archive.repository.WorkMaterialRepository;
 import com.allin.teaming.user.Jwt.JwtUtil;
@@ -11,7 +12,9 @@ import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserSimpleDto;
 import com.allin.teaming.user.repository.UserRepository;
 import com.allin.teaming.workspace.domain.Work;
+import com.allin.teaming.workspace.domain.Workspace;
 import com.allin.teaming.workspace.repository.WorkRepository;
+import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -22,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,12 +35,13 @@ public class MaterialService {
     private final WorkRepository workRepository;
     private final MaterialRepository materialRepository;
     private final WorkMaterialRepository workMaterialRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final JwtUtil jwtUtil;
 
     /*
      ----------------------- 자료 presigned-url 생성 ---------------------
      */
-    @Value("${amazon.aws.bucket}")
+    @Value("${amazon.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
 
@@ -63,6 +64,19 @@ public class MaterialService {
 
     private String createPath(String prefix, String filename) {
         return String.format("%s/%s", prefix, filename);
+    }
+
+    // --------------------------------------------------------------------
+
+    /*
+    CDN url 생성
+     */
+    @Value("${amazon.aws.cloudfront.domain}")
+    private String domain;
+
+    private String getCDNUrl(String filePath) {
+        if (filePath == null) return null;
+        return domain + "/" + filePath;
     }
 
     // --------------------------------------------------------------------
@@ -91,7 +105,7 @@ public class MaterialService {
     자료 생성
      */
     @Transactional
-    public MaterialSimpleResponseDto createMaterial(String token, MaterialCreateRequestDto request) {
+    public MaterialCreateResponseDto createMaterial(String token, MaterialCreateRequestDto request) {
         if (request.getFilename() == null) throw new IllegalArgumentException("파일 이름을 입력하지 않았습니다. ");
         User owner = findUserByToken(token);
         Material material = request.toEntity(owner);
@@ -112,7 +126,7 @@ public class MaterialService {
 
         String filaPath = createPath("materialId:" + material.getId(), material.getFilename());
         URL url = getPresignedUrl(filaPath);
-        return MaterialSimpleResponseDto.toDto(material, workNames, url, UserSimpleDto.of(owner));
+        return MaterialCreateResponseDto.toDto(material, workNames, url, UserSimpleDto.of(owner));
     }
 
     // 자료 삭제
@@ -130,17 +144,31 @@ public class MaterialService {
         }
     }
 
-
     /*
     조회
      */
     // 자료 전체 조회
+    public List<MaterialResponseDto> getAllMaterial() {
+        List<Material> materials = materialRepository.findAll();
+        return materials.stream().map(MaterialResponseDto::toDto).toList();
+
+    }
 
     // 워크스페이스 내 자료 전체 조회
+    public List<MaterialResponseDto> getAllMaterialByWorkspaceId(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 조회할 수 없습니다. "));
+
+        Set<Material> materials = new HashSet<>(materialRepository.findAllByWorkspaceId(workspaceId));
+
+        return materials.stream().map(MaterialResponseDto::toDto).toList();
+    }
 
     // 나의 자료 전체 조회(삭제에 사용)
 
     // 업무의 자료 전체 조회
+
+    // 선택한 자료의 CDNUrl 반환 -> TODO Redis 사용
 
     // 업무에 자료List 추가 (자료에 업무 추가)
 
