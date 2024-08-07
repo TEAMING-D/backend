@@ -67,24 +67,6 @@ public class UserDto {
         }
     }
 
-    @Builder
-    @Getter
-    public static class UserSimpleDto {
-        private Long userId;
-        private String username;
-        private String schoolName;
-        private String schoolNum;
-
-        public static UserSimpleDto of(User user) {
-            return UserSimpleDto.builder()
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .schoolName(user.getSchool().getName())
-                    .schoolNum(user.getSchoolNum())
-                    .build();
-        }
-    }
-
     // 사용자 상세 조회
     @Getter
     @NoArgsConstructor
@@ -97,6 +79,7 @@ public class UserDto {
         private String info;
         private String schoolName;
         private String schoolNum;
+        private String phone;
         private String major;
         private String birth;
         private String sns;
@@ -114,6 +97,7 @@ public class UserDto {
                     .info(user.getInfo())
                     .schoolName(user.getSchool().getName())
                     .schoolNum(user.getSchoolNum())
+                    .phone(user.getPhone())
                     .major(user.getMajor())
                     .birth(user.getBirth())
                     .sns(user.getSns())

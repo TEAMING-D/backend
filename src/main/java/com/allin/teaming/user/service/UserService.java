@@ -5,6 +5,7 @@ import com.allin.teaming.user.domain.School;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserDto.*;
 import com.allin.teaming.user.dto.UserIdResponseDto;
+import com.allin.teaming.user.dto.UserSimpleDto;
 import com.allin.teaming.user.repository.SchoolRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,13 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 조회할 수 없습니다."));
     }
 
-    // id로 회원 조회 (마이페이지)
+    // 내 정보 조회
     @Transactional(readOnly = true)
     public UserDetailDto getUserInfo(String token) {
         return UserDetailDto.of(findUserByToken(token));
     }
 
+    // id로 회원 조회 (마이페이지)
     @Transactional(readOnly = true)
     public UserDetailDto getUserInfoById(Long userId) {
         return userRepository.findById(userId).map(UserDetailDto::of)

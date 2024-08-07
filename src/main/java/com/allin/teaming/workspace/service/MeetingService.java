@@ -151,8 +151,8 @@ public class MeetingService {
                 .filter(Optional::isPresent).map(Optional::get).toList();
         List<UserScheduleDto> userScheduleDtos = users.stream().map(UserScheduleDto::of).toList();
 
-        List<Schedule> schedules = userIds.stream()
-                .map(scheduleRepository::findByUserId)
+        List<Schedule> schedules = users.stream()
+                .map(scheduleRepository::findByUser)
                 .filter(Optional::isPresent)
                 .map(Optional::get).toList();
 
