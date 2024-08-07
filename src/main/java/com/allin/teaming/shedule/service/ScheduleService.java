@@ -76,7 +76,7 @@ public class ScheduleService {
     public IdResponse modifySchedule(String token, ScheduleModifyDto request) {
         User user = findUserByToken(token);
 //        Schedule schedule = findScheduleById(request.getScheduleId());
-        Schedule schedule = scheduleRepository.findByUserId(user.getId())
+        Schedule schedule = scheduleRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저의 스케줄을 찾을 수 없습니다. "));
         schedule.update(request.getTitle());
         return IdResponse.of(schedule);
@@ -88,9 +88,9 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(String token) {
         User user = findUserByToken(token);
-        Schedule schedule = scheduleRepository.findByUserId(user.getId())
+        Schedule schedule = scheduleRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("유저의 스케줄을 찾을 수 없습니다. "));
-
-        scheduleRepository.delete(schedule);
+        user.clearSchedule();
+        schedule.clearUser();
     }
 }

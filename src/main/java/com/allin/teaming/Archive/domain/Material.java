@@ -22,6 +22,7 @@ public class Material {
     private Long id;
 
     private String filename;
+    private String filePath;
 
     private LocalDate createdAt;
 

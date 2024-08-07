@@ -31,6 +31,10 @@ public class MaterialController {
 
     // 조회
     // 자료 전체 조회
+    @GetMapping
+    public ResponseEntity<? extends BasicResponse> getAllMaterial() {
+        return ResponseEntity.ok(new DataResponse<>(materialService.getAllMaterial()));
+    }
 
     // 워크스페이스 내 자료 전체 조회
 
@@ -41,4 +45,11 @@ public class MaterialController {
     // 업무에 자료List 추가 (자료에 업무 추가)
 
     // 자료 이름으로 조회
+
+    // 자료 url 조회
+    @GetMapping("/url/{material_id}")
+    public ResponseEntity<? extends BasicResponse> getUrl(
+            @PathVariable("material_id") Long materialId) {
+        return ResponseEntity.ok(new DataResponse<>(materialService.getUrl(materialId)));
+    }
 }

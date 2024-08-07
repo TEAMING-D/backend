@@ -34,4 +34,8 @@ public class Schedule {
     public void update(String title) {
         this.title = title;
     }
+
+    public void clearUser() {
+        this.user = null;
+    }
 }

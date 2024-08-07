@@ -3,10 +3,12 @@ package com.allin.teaming.Archive.dto;
 import com.allin.teaming.Archive.domain.Material;
 import com.allin.teaming.user.domain.User;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Builder
+@Getter
 public class MaterialResponseDto {
     private Long materialId;
     private String username;

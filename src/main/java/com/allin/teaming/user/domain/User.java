@@ -65,7 +65,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Work> works = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "owner")
     private List<Material> materials = new ArrayList<>();
 
 
@@ -96,5 +96,8 @@ public class User {
 
     public void updateSchool(School school) {
         this.school = school;
+    }
+    public void clearSchedule() {
+        this.schedule = null;
     }
 }

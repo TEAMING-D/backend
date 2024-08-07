@@ -5,6 +5,7 @@ import com.allin.teaming.Archive.domain.WorkMaterial;
 import com.allin.teaming.Archive.dto.MaterialCreateRequestDto;
 import com.allin.teaming.Archive.dto.MaterialCreateResponseDto;
 import com.allin.teaming.Archive.dto.MaterialResponseDto;
+import com.allin.teaming.Archive.dto.MaterialUrlResponseDto;
 import com.allin.teaming.Archive.repository.MaterialRepository;
 import com.allin.teaming.Archive.repository.WorkMaterialRepository;
 import com.allin.teaming.user.Jwt.JwtUtil;
@@ -62,6 +63,7 @@ public class MaterialService {
         return expiration;
     }
 
+    // TODO : 유일한 파일이름으로 변경
     private String createPath(String prefix, String filename) {
         return String.format("%s/%s", prefix, filename);
     }
@@ -148,6 +150,7 @@ public class MaterialService {
     조회
      */
     // 자료 전체 조회
+    @Transactional(readOnly = true)
     public List<MaterialResponseDto> getAllMaterial() {
         List<Material> materials = materialRepository.findAll();
         return materials.stream().map(MaterialResponseDto::toDto).toList();
@@ -155,6 +158,7 @@ public class MaterialService {
     }
 
     // 워크스페이스 내 자료 전체 조회
+    @Transactional(readOnly = true)
     public List<MaterialResponseDto> getAllMaterialByWorkspaceId(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 조회할 수 없습니다. "));
@@ -175,4 +179,13 @@ public class MaterialService {
     // 자료 이름으로 조회
 
     //TODO : 자료 수정 (복사 -> 삭제)
+
+    // 자료 url 반환
+    @Transactional(readOnly = true)
+    public MaterialUrlResponseDto getUrl(Long materialId) {
+        Material material = findMaterialById(materialId);
+        String filePath = createPath("materialId:" + materialId, material.getFilename());
+        String url = getCDNUrl(filePath);
+        return MaterialUrlResponseDto.toDto(material, url);
+    }
 }
