@@ -4,6 +4,8 @@ import com.allin.teaming.workspace.domain.Assignment;
 import com.allin.teaming.workspace.domain.Work;
 import com.allin.teaming.user.domain.Membership;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -19,4 +21,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     // work_id로 Assignment 삭제
     void deleteByWorkId(Long workId);
+
+    @Query("SELECT a FROM Assignment a WHERE a.membership.workspace.id = :workspaceId")
+    List<Assignment> findByMembershipWorkspaceId(@Param("workspaceId") Long workspaceId);
 }
