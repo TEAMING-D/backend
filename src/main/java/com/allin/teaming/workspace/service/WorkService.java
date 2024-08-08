@@ -203,7 +203,12 @@ public class WorkService {
     // 워크스페이스 내의 모든 업무 조회
     @Transactional(readOnly = true)
     public List<WorkDTO> getAllWorks(Long workspaceId) {
-        List<Work> works = workRepository.findByWorkspaceId(workspaceId);
+        List<Assignment> assignments = assignmentRepository.findByMembershipWorkspaceId(workspaceId);
+        List<Work> works = assignments.stream()
+                .map(Assignment::getWork)
+                .distinct()
+                .collect(Collectors.toList());
+
         return works.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -282,12 +287,14 @@ public class WorkService {
     private WorkDTO convertToDTO(Work work) {
         WorkDTO dto = new WorkDTO(work);
 
+        // 할당된 사용자 ID 목록
         List<Long> assignedUserIds = assignmentRepository.findByWork(work).stream()
                 .map(assignment -> assignment.getMembership().getUser().getId())
                 .collect(Collectors.toList());
 
+        // 할당된 사용자 정보
         List<UserDto.UserAssignmentDto> assignedUsers = assignmentRepository.findByWork(work).stream()
-                .map(assignment -> UserDto.UserAssignmentDto.of(assignment.getMembership().getUser(), work.getWorkspace().getId()))
+                .map(assignment -> UserDto.UserAssignmentDto.of(assignment.getMembership().getUser(), assignment.getMembership().getWorkspace().getId()))
                 .collect(Collectors.toList());
 
         dto.setAssignedUserIds(assignedUserIds);
