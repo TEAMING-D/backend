@@ -19,6 +19,7 @@ public class WorkController {
             @PathVariable Long workspaceId,
             @RequestBody WorkDTO workDTO,
             @RequestHeader("Authorization") String token) {
+        System.out.println("이 api 요청함");
         WorkDTO createdWork = workService.createWork(token, workspaceId, workDTO);
         return ResponseEntity.ok(createdWork);
     }

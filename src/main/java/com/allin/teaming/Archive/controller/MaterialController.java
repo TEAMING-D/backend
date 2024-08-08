@@ -1,6 +1,8 @@
 package com.allin.teaming.Archive.controller;
 
 import com.allin.teaming.Archive.dto.MaterialCreateRequestDto;
+import com.allin.teaming.Archive.dto.MaterialResponseDto;
+import com.allin.teaming.Archive.dto.MaterialUpdateWorkRequestDto;
 import com.allin.teaming.Archive.service.MaterialService;
 import com.allin.teaming.Response.BasicResponse;
 import com.allin.teaming.Response.DataResponse;
@@ -37,14 +39,33 @@ public class MaterialController {
     }
 
     // 워크스페이스 내 자료 전체 조회
+    @GetMapping("/workspace/{workspace_id}")
+    public ResponseEntity<? extends BasicResponse> getAllMaterialByWorkspaceId(
+            @PathVariable("workspace_id") Long workspaceId) {
+        return ResponseEntity.ok(new DataResponse<>(materialService.getAllMaterialByWorkspaceId(workspaceId)));
+    };
 
     // 나의 자료 전체 조회(삭제에 사용)
+    @GetMapping("/my")
+    public ResponseEntity<? extends BasicResponse> getAllMyMaterial(
+            @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(new DataResponse<>(materialService.getAllMyMaterial(token)));
+    }
 
     // 업무의 자료 전체 조회
+    @GetMapping("/work/{work_id}")
+    public ResponseEntity<? extends BasicResponse> getAllMaterialByWorkId(
+            @PathVariable("work_id") Long workId) {
+        return ResponseEntity.ok(new DataResponse<>(materialService.getAllMaterialByWorkId(workId)));
+    }
 
     // 업무에 자료List 추가 (자료에 업무 추가)
+    @PutMapping("/work")
+    public ResponseEntity<? extends BasicResponse> updateWork(
+            @RequestBody MaterialUpdateWorkRequestDto request) {
+        return ResponseEntity.ok(new DataResponse<>(materialService.updateWork(request)));
+    }
 
-    // 자료 이름으로 조회
 
     // 자료 url 조회
     @GetMapping("/url/{material_id}")

@@ -2,18 +2,18 @@ package com.allin.teaming.Archive.service;
 
 import com.allin.teaming.Archive.domain.Material;
 import com.allin.teaming.Archive.domain.WorkMaterial;
-import com.allin.teaming.Archive.dto.MaterialCreateRequestDto;
-import com.allin.teaming.Archive.dto.MaterialCreateResponseDto;
-import com.allin.teaming.Archive.dto.MaterialResponseDto;
-import com.allin.teaming.Archive.dto.MaterialUrlResponseDto;
+import com.allin.teaming.Archive.dto.*;
 import com.allin.teaming.Archive.repository.MaterialRepository;
 import com.allin.teaming.Archive.repository.WorkMaterialRepository;
 import com.allin.teaming.user.Jwt.JwtUtil;
+import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.user.domain.User;
 import com.allin.teaming.user.dto.UserSimpleDto;
+import com.allin.teaming.user.repository.MembershipRepository;
 import com.allin.teaming.user.repository.UserRepository;
 import com.allin.teaming.workspace.domain.Work;
 import com.allin.teaming.workspace.domain.Workspace;
+import com.allin.teaming.workspace.dto.WorkspaceSimpleResponseDto;
 import com.allin.teaming.workspace.repository.WorkRepository;
 import com.allin.teaming.workspace.repository.WorkspaceRepository;
 import com.amazonaws.HttpMethod;
@@ -37,6 +37,7 @@ public class MaterialService {
     private final MaterialRepository materialRepository;
     private final WorkMaterialRepository workMaterialRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final MembershipRepository membershipRepository;
     private final JwtUtil jwtUtil;
 
     /*
@@ -101,6 +102,37 @@ public class MaterialService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 자료를 조회할 수 없습니다. "));
     }
 
+    private Workspace findWorkspaceById(Long workspaceId) {
+        return workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 조회할 수 없습니다. "));
+    }
+
+    private Membership findMembershipByUserAndWorkspace(User user, Workspace workspace) {
+        return membershipRepository.findByUserAndWorkspace(user, workspace)
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버십을 조회할 수 없습니다. "));
+    }
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다. "));
+    }
+
+    // material dto 추출
+    private MaterialResponseDto extractMaterialDto(Material material) {
+        return MaterialResponseDto.toDto(
+                material,
+                extractUserDto(material),
+                extractWorkspaceDto(material));
+    }
+
+    // user(owner) dto 추출
+    private UserSimpleDto extractUserDto(Material material) {
+        return UserSimpleDto.of(material.getMembership().getUser());
+    }
+    // workspace dto 추출
+    private WorkspaceSimpleResponseDto extractWorkspaceDto(Material material) {
+        return WorkspaceSimpleResponseDto.toDto(material.getMembership().getWorkspace());
+    }
+
     // --------------------------------------------------------------------
 
     /*
@@ -110,7 +142,10 @@ public class MaterialService {
     public MaterialCreateResponseDto createMaterial(String token, MaterialCreateRequestDto request) {
         if (request.getFilename() == null) throw new IllegalArgumentException("파일 이름을 입력하지 않았습니다. ");
         User owner = findUserByToken(token);
-        Material material = request.toEntity(owner);
+        Workspace workspace = findWorkspaceById(request.getWorkspaceId());
+        Membership membership = findMembershipByUserAndWorkspace(owner, workspace);
+
+        Material material = request.toEntity(membership);
         materialRepository.save(material);
 
         List<Work> works = request.getWorkIds().stream().map(this::findWorkById).toList();
@@ -128,7 +163,7 @@ public class MaterialService {
 
         String filaPath = createPath("materialId:" + material.getId(), material.getFilename());
         URL url = getPresignedUrl(filaPath);
-        return MaterialCreateResponseDto.toDto(material, workNames, url, UserSimpleDto.of(owner));
+        return MaterialCreateResponseDto.toDto(material, workNames, url, UserSimpleDto.of(owner), WorkspaceSimpleResponseDto.toDto(workspace));
     }
 
     // 자료 삭제
@@ -153,34 +188,75 @@ public class MaterialService {
     @Transactional(readOnly = true)
     public List<MaterialResponseDto> getAllMaterial() {
         List<Material> materials = materialRepository.findAll();
-        return materials.stream().map(MaterialResponseDto::toDto).toList();
-
+        return materials.stream().map(this::extractMaterialDto).toList();
     }
 
     // 워크스페이스 내 자료 전체 조회
     @Transactional(readOnly = true)
     public List<MaterialResponseDto> getAllMaterialByWorkspaceId(Long workspaceId) {
-        Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 워크스페이스를 조회할 수 없습니다. "));
-
         Set<Material> materials = new HashSet<>(materialRepository.findAllByWorkspaceId(workspaceId));
-
-        return materials.stream().map(MaterialResponseDto::toDto).toList();
+        return materials.stream().map(this::extractMaterialDto).toList();
     }
 
     // 나의 자료 전체 조회(삭제에 사용)
+    @Transactional(readOnly = true)
+    public List<MaterialResponseDto> getAllMyMaterial(String token) {
+        User user = findUserByToken(token);
+        Set<Material> materials = new HashSet<>(materialRepository.findAllByUserId(user.getId()));
+        return materials.stream().map(this::extractMaterialDto).toList();
+    }
+
 
     // 업무의 자료 전체 조회
-
-    // 선택한 자료의 CDNUrl 반환 -> TODO Redis 사용
+    @Transactional(readOnly = true)
+    public List<MaterialResponseDto> getAllMaterialByWorkId(Long workId) {
+        List<Material> materials = materialRepository.findAllByWorkId(workId);
+        return materials.stream().map(this::extractMaterialDto).toList();
+    }
 
     // 업무에 자료List 추가 (자료에 업무 추가)
+    @Transactional
+    public MaterialResponseDto updateWork(MaterialUpdateWorkRequestDto request) {
+        Material material = findMaterialById(request.getMaterialId());
 
-    // 자료 이름으로 조회
+        // 수정 후 일 정보
+        Set<Long> workIdSet = new HashSet<>(request.getWorkIds());
+        List<Work> afterWorks = workIdSet.stream().map(this::findWorkById).toList();
+
+        // 기존의 일 목록
+        List<WorkMaterial> beforeWorkMaterial = material.getWorkMaterials();
+        List<Work> beforeWork = beforeWorkMaterial.stream().map(
+                WorkMaterial::getWork).toList();
+
+        // 기존의 일 목록에서 삭제해야 할 일 목록
+        List<WorkMaterial> deleteWorkMaterials = beforeWorkMaterial.stream()
+                .filter(wm -> !afterWorks.contains(wm.getWork()))
+                .toList();
+
+
+        List<WorkMaterial> addWorkMaterials = afterWorks.stream()
+                .filter(w -> !beforeWork.contains(w))
+                .map(w -> WorkMaterial.builder()
+                        .material(material)
+                        .work(w).build())
+                .toList();
+
+
+        material.getWorkMaterials().removeAll(deleteWorkMaterials);
+        material.getWorkMaterials().addAll(addWorkMaterials);
+
+
+        workMaterialRepository.deleteAll(deleteWorkMaterials);
+        workMaterialRepository.saveAll(addWorkMaterials);
+
+        Material updatedMaterial = materialRepository.save(material);
+
+        return extractMaterialDto(updatedMaterial);
+    }
 
     //TODO : 자료 수정 (복사 -> 삭제)
 
-    // 자료 url 반환
+    // 자료 url 반환 -> TODO Redis 사용
     @Transactional(readOnly = true)
     public MaterialUrlResponseDto getUrl(Long materialId) {
         Material material = findMaterialById(materialId);
