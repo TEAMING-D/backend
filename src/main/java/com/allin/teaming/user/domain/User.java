@@ -65,8 +65,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Work> works = new ArrayList<>();
 
-    @OneToMany(mappedBy = "owner")
-    private List<Material> materials = new ArrayList<>();
+//    @OneToMany(mappedBy = "owner")
+//    private List<Material> materials = new ArrayList<>();
 
 
     // 학교

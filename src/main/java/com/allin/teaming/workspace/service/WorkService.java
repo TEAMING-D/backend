@@ -61,6 +61,7 @@ public class WorkService {
         work.setProgress(workDTO.getProgress());
         work.setWeight(workDTO.getWeight());
 
+        System.out.println("여기는 실행");
         Work savedWork = workRepository.save(work);
 
         // 업무와 사용자 간의 관계를 저장

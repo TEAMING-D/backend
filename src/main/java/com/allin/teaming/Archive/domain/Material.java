@@ -1,5 +1,6 @@
 package com.allin.teaming.Archive.domain;
 
+import com.allin.teaming.user.domain.Membership;
 import com.allin.teaming.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,6 @@ public class Material {
     private Long id;
 
     private String filename;
-    private String filePath;
 
     private LocalDate createdAt;
 
@@ -30,9 +30,10 @@ public class Material {
     private double size;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User owner;
+    @JoinColumn(name = "membership_id")
+    private Membership membership;
 
     @OneToMany(mappedBy = "material", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WorkMaterial> workMaterials = new ArrayList<>();
+
 }

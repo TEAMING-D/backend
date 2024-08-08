@@ -9,9 +9,20 @@ import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query("SELECT DISTINCT m FROM Material m " +
-            "JOIN m.workMaterials wm " +
-            "JOIN wm.work w " +
-            "JOIN w.workspace ws " +
+            "JOIN m.membership ms " +
+            "JOIN ms.workspace ws " +
             "WHERE ws.id = :workspaceId")
     List<Material> findAllByWorkspaceId(@Param("workspaceId") Long workspaceId);
+
+    @Query("SELECT m FROM Material m " +
+            "JOIN m.membership ms " +
+            "JOIN ms.user u " +
+            "where u.id = :userId")
+    List<Material> findAllByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT m FROM Material m " +
+            "JOIN m.workMaterials wm " +
+            "JOIN wm.work w " +
+            "WHERE w.id = :workId")
+    List<Material> findAllByWorkId(@Param("workId") Long workId);
 }
